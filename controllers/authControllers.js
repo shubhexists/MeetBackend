@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1m" }
     );
-    res.status(200).json({ accessToken });
+    res.status(200).json({ accessToken, "username":user.username, "roomId":user.roomId , "role":user.role });
   } else {
     res.status(401);
     throw new Error("Invalid username or password");
