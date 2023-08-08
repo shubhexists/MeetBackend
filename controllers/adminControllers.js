@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-
+const Room = require("../models/roomModels") 
 //@desc get all users
 //@route GET /api/admin/getusers
 //@access public
@@ -24,5 +24,44 @@ const getAllAdmins = asyncHandler(async (req, res) => {
     }
 );
 
+//@desc create a new room
+//@route GET /api/admin/createRoom
+//@access public
+const createNewRoom = asyncHandler(async (req,res) => {
+  const { roomId, roomDescription } = req.body;
+  if(!roomId){
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  }
+  const roomExists = await Room.findOne({
+    roomId
+  });
+  if(roomExists){
+    res.status(400);
+    throw new Error("Room already exists, Kindly create a new roomId")
+  }
+    const room = await Room.create(
+        {
+            roomId,
+            users:[],
+            roomDescription
+        }
+    );
+    if (room) {
+        console.log("Room created");
+        res
+          .status(201)
+          .json({
+            _id:room.id,
+            roomId,
+            users:room.users,
+            roomDescription
+          });
+      } else {
+        res.status(400);
+        throw new Error("Invalid user data");
+      }
 
-module.exports = {getAllUsers, getAllAdmins};
+})
+
+module.exports = {getAllUsers, getAllAdmins,createNewRoom};

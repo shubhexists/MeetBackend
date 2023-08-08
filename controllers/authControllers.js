@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
-// const { generateMeetingToken } = require("./tokenController");
+const Room = require("../models/roomModels");
 
 //@desc Register a user
 //@route POST /api/users/register
@@ -21,6 +21,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Username already exists");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
+  const roomExists = await User.findOne({
+    roomId
+  });
+  if (!roomExists) {
+    res.status(400);
+    throw new Error("Room does not exists. Kindly make the Room first.")
+  }
   const user = await User.create({
     name,
     username,
