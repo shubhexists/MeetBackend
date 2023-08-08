@@ -7,6 +7,7 @@ const User = require("../models/userModel");
 //@desc Register a user
 //@route POST /api/users/register
 //@access public
+//Only Owner can register a user
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, password, roomId, role } = req.body;
   //REMEMBER ROLE IS AN ARRAY HERE
