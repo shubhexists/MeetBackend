@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
             required: [true, "Please enter the password"],
         },
         roomId:{
-            type: [String],
+            type: String,
             required: [true, "Please enter the roomId(s) alloted"],
         },
         role:{

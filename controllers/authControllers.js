@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Username already exists");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const roomExists = await User.findOne({
+  const roomExists = await Room.findOne({
     roomId
   });
   if (!roomExists) {
@@ -35,10 +35,14 @@ const registerUser = asyncHandler(async (req, res) => {
     roomId,
     role,
   });
-  const room = await Room.findByIdAndUpdate(
-    roomId,
-    { $push: { users: username } },
-    { new: true } 
+  const room = await Room.findOneAndUpdate(
+    {roomId: roomId},
+    {
+      $push: { users: username }
+    },
+    {
+      new: true
+    }
   )
 
   if (user) {
@@ -80,7 +84,6 @@ const loginUser = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
     );
     res.status(200).json({ accessToken, "username":user.username, "roomId":user.roomId , "role":user.role });
   } else {
@@ -95,24 +98,24 @@ const loginUser = asyncHandler(async (req, res) => {
 //This Route has to be called manually and isn't placed on the GUI
 
 const createOwner = asyncHandler(async (req, res) => {
-  const { name, username, password, roomId, role } = req.body;
+  const { name, username, password} = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE 
-  if (!name || !username || !password || !roomId || !role) {
+  if (!name || !username || !password) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
-  const ownerExists = await User.findOne({ role: "Owner" });
-  if (ownerExists) {
+  const usernameExists = await User.findOne({ username });
+  if (usernameExists) {
     res.status(400);
-    throw new Error("Owner already exists");
+    throw new Error("Username already exists");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     name,
     username,
     password: hashedPassword,
-    roomId,
-    role,
+    roomId: ["All"],
+    role: "Owner"
   });
   if (user) {
     console.log("Owner created");
@@ -122,7 +125,6 @@ const createOwner = asyncHandler(async (req, res) => {
         _id: user.id,
         username: user.username,
         name: user.name,
-        roomId: user.roomId,
         role: user.role,
       });
   } else {
