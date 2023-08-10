@@ -10,7 +10,7 @@ const Room = require("../models/roomModels");
 //Only Owner can register a user
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, password, roomId, role } = req.body;
-  //REMEMBER ROLE IS AN ARRAY HERE
+  //REMEMBER RoomID IS AN ARRAY HERE
   if (!name || !username || !password || !roomId || !role) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -35,6 +35,12 @@ const registerUser = asyncHandler(async (req, res) => {
     roomId,
     role,
   });
+  const room = await Room.findByIdAndUpdate(
+    roomId,
+    { $push: { users: username } },
+    { new: true } 
+  )
+
   if (user) {
     console.log("User created");
     res
@@ -83,4 +89,46 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, loginUser };
+//@desc Create a new Owner
+//@route POST /api/auth/createOwner
+//@access public
+//This Route has to be called manually and isn't placed on the GUI
+
+const createOwner = asyncHandler(async (req, res) => {
+  const { name, username, password, roomId, role } = req.body;
+  //REMEMBER RoomId IS AN ARRAY HERE 
+  if (!name || !username || !password || !roomId || !role) {
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  }
+  const ownerExists = await User.findOne({ role: "Owner" });
+  if (ownerExists) {
+    res.status(400);
+    throw new Error("Owner already exists");
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({
+    name,
+    username,
+    password: hashedPassword,
+    roomId,
+    role,
+  });
+  if (user) {
+    console.log("Owner created");
+    res
+      .status(201)
+      .json({
+        _id: user.id,
+        username: user.username,
+        name: user.name,
+        roomId: user.roomId,
+        role: user.role,
+      });
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
+module.exports = { registerUser, loginUser, createOwner};

@@ -9,6 +9,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
     const users = await User.find({
         role: "User",
     });
+    console.log(users);
     res.json(users);
     }
 );
@@ -22,6 +23,15 @@ const getAllAdmins = asyncHandler(async (req, res) => {
     });
     res.json(admins);
     }
+);
+
+//@desc get all admins
+//@route GET /api/admin/getadmins
+//@access public
+const getAllRooms = asyncHandler(async (req, res) => {
+  const rooms = await Room.find({});
+  res.json(rooms);
+  }
 );
 
 //@desc create a new room
@@ -64,4 +74,4 @@ const createNewRoom = asyncHandler(async (req,res) => {
 
 })
 
-module.exports = {getAllUsers, getAllAdmins,createNewRoom};
+module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms};
