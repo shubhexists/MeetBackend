@@ -38,7 +38,7 @@ const getAllRooms = asyncHandler(async (req, res) => {
 //@route GET /api/admin/createRoom
 //@access public
 const createNewRoom = asyncHandler(async (req,res) => {
-  const { roomId, roomDescription } = req.body;
+  const { roomId, description } = req.body;
   if(!roomId){
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -54,7 +54,7 @@ const createNewRoom = asyncHandler(async (req,res) => {
         {
             roomId,
             users:[],
-            roomDescription
+            description
         }
     );
     if (room) {
@@ -65,13 +65,14 @@ const createNewRoom = asyncHandler(async (req,res) => {
             _id:room.id,
             roomId,
             users:room.users,
-            roomDescription
+            description
           });
       } else {
         res.status(400);
         throw new Error("Invalid user data");
       }
 
-})
+});
+
 
 module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms};

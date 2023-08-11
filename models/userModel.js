@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema(
         role:{
             type: String,
             required: [true, "Please enter the role"],
+        },
+        deviceInfo:{
+            type: String,
+        },
+        isOnline:{
+            type: Boolean,
+            default: false,
         }
     },{
         timestamps: true,

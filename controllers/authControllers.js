@@ -9,6 +9,7 @@ const Room = require("../models/roomModels");
 //@access public
 //Only Owner can register a user
 const registerUser = asyncHandler(async (req, res) => {
+  console.log("Registering User");
   const { name, username, password, roomId, role } = req.body;
   //REMEMBER RoomID IS AN ARRAY HERE
   if (!name || !username || !password || !roomId || !role) {
@@ -95,8 +96,8 @@ const loginUser = asyncHandler(async (req, res) => {
 //@desc Create a new Owner
 //@route POST /api/auth/createOwner
 //@access public
-//This Route has to be called manually and isn't placed on the GUI
 
+//This Route has to be called manually and isn't placed on the GUI
 const createOwner = asyncHandler(async (req, res) => {
   const { name, username, password} = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE 

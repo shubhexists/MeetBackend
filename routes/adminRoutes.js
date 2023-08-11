@@ -10,4 +10,5 @@ router.get("/getrooms",getAllRooms)
 //allow only owner to login
 router.post('/auth/login',checkOwner,loginUser);
 router.post('/createRoom',createNewRoom);
+// router.put("/setDeviceInfo",setDeviceInfo);
 module.exports = router;
