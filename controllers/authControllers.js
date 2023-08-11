@@ -67,6 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route POST /api/users/login
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
+  console.log("Logging in User");
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(400);

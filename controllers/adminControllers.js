@@ -9,7 +9,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
     const users = await User.find({
         role: "User",
     });
-    console.log(users);
+    // console.log(users);
     res.json(users);
     }
 );
@@ -74,5 +74,21 @@ const createNewRoom = asyncHandler(async (req,res) => {
 
 });
 
+//@desc Delete a User
+//@route DELETE /api/admin/deleteUser/:id
+//@access public
+const deleteUser = asyncHandler(async(req,res) => {
+    const {id} = req.params;
+    //first delete the User in corresponding Room
+    const user = await User.findOne({username:id});
+    const room = await Room.findOneAndUpdate(
+      {roomId: user.roomId},
+      { $pull: { users: id } }
+    );
+    await User.findOneAndDelete({username:id});
+    res.json({
+      message:"User Successfully Deleted"
+    })
+});
 
-module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms};
+module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser};
