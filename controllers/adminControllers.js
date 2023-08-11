@@ -1,6 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Room = require("../models/roomModels") 
+const Admin = require("../models/adminModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 //@desc get all users
 //@route GET /api/admin/getusers
 //@access public
@@ -18,7 +22,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 //@route GET /api/admin/getadmins
 //@access public
 const getAllAdmins = asyncHandler(async (req, res) => {
-    const admins = await User.find({
+    const admins = await Admin.find({
         role: "Admin",
     });
     res.json(admins);
@@ -91,4 +95,58 @@ const deleteUser = asyncHandler(async(req,res) => {
     })
 });
 
-module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser};
+const deleteAdmin = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  //first delete the Admin in corresponding Room
+  const admin = await Admin.findOne({username:id});
+  for(var i in admin.roomId){
+    const room = await Room.findOneAndUpdate(
+      {roomId: admin.roomId[i]},
+      { $pull: { admins: id } }
+    );
+  }
+  await Admin.findOneAndDelete({username:id});
+  res.json({
+    message:"Admin Successfully Deleted"
+  })
+});
+
+//@desc Login the user
+//@route POST /api/users/login
+//@access public
+const loginAdmin = asyncHandler(async (req, res) => {
+  console.log("Logging in User");
+  const { username, password } = req.body;
+  if (!username || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  }
+  const admin = await Admin.findOne({ username });
+  console.log(admin);
+  if (admin && (await bcrypt.compare(password, admin.password))) {
+    const accessToken = jwt.sign(
+      {
+        admin: {
+          _id: admin._id,
+          username: admin.username,
+          name: admin.name,
+          roomId: admin.roomId,
+          role: admin.role,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    res.status(200).json({
+      accessToken,
+      username: admin.username,
+      roomId: admin.roomId,
+      role: admin.role,
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid username or password");
+  }
+});
+
+
+module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser,deleteAdmin,loginAdmin};
