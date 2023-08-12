@@ -35,6 +35,8 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     roomId,
     role,
+    deviceInfo: "",
+    isOnline: false
   });
 
   const room = await Room.findOneAndUpdate(

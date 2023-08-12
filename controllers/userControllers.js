@@ -18,5 +18,13 @@ const changeStatusFalse = asyncHandler(async (req,res) => {
     res.json({message: "Status Changed"});
 });
 
+const setDeviceInfo = asyncHandler(async (req,res) => {
+    const { id } = req.params;
+    const { deviceInfo } = req.body;
+    await User.findOneAndUpdate(
+        {username: id},
+        {deviceInfo}
+    )
+});
 
-module.exports = {changeStatusTrue,changeStatusFalse};
+module.exports = {changeStatusTrue,changeStatusFalse,setDeviceInfo};

@@ -7,7 +7,6 @@ const checkOwner = require("../middleware/checkOwnerHandler.js");
 router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
 router.get("/getrooms",getAllRooms)
-//allow only owner to login
 router.post('/auth/login',loginAdmin); 
 router.post('/createRoom',createNewRoom);
 // router.put("/setDeviceInfo",setDeviceInfo);
