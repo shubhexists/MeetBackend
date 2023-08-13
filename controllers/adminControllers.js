@@ -145,10 +145,23 @@ const loginAdmin = asyncHandler(async (req, res) => {
 const deleteRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const room = await Room.findOne({ roomId: id });
-  for (const username of room.users) {
-    await User.findOneAndDelete({ username });
+  console.log("room found");
+  console.log(room.users);
+  for (username in room.users) {
+    console.log(room.users[username]);
+    await User.findOneAndDelete({ username: room.users[username] });
+    const admin = await Admin.findOne({ username: room.users[username] });
+    if (admin) {
+      for(const roomId in admin.roomId){
+        console.log(admin.roomId[roomId]);
+        if(admin.roomId[roomId]===id){
+          var updated = admin.roomId.splice(roomId,1);
+        }
+      }
+      await admin.save();
+    }
   }
-  await room.remove();
+  await Room.findOneAndDelete({ roomId: id });
   res.status(200).json({
     message: "Room Successfully Deleted",
   });
