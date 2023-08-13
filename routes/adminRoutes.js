@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom} = require("../controllers/adminControllers.js");
+const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin} = require("../controllers/adminControllers.js");
 // const {loginUser} = require("../controllers/authControllers.js");
 // const checkOwner = require("../middleware/checkOwnerHandler.js");
 
 router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
-router.get("/getrooms",getAllRooms)
+router.get("/getrooms",getAllRooms);
+router.get("/getAdmin/:id",getAdmin);
 router.post('/auth/login',loginAdmin); 
 router.post('/createRoom',createNewRoom);
 // router.put("/setDeviceInfo",setDeviceInfo);

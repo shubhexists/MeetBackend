@@ -193,5 +193,12 @@ const enableRoom = asyncHandler(async(req,res) => {
   });
 });
 
+const getAdmin = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  const admin = await Admin.findOne({username:id});
+  res.status(200).json({
+    admin
+  });
+});
 
-module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser,deleteAdmin,loginAdmin,deleteRoom,enableRoom,disableRoom,addRoom};
+module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser,deleteAdmin,loginAdmin,deleteRoom,enableRoom,disableRoom,addRoom,getAdmin};
