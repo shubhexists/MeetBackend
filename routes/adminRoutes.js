@@ -8,7 +8,8 @@ router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
 router.get("/getrooms",getAllRooms);
 router.get("/getAdmin/:id",getAdmin);
-router.get("getRoom/:id",getRoom);
+router.get("/getRoom/:id",getRoom);
+
 router.post('/auth/login',loginAdmin); 
 router.post('/createRoom',createNewRoom);
 // router.put("/setDeviceInfo",setDeviceInfo);

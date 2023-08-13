@@ -196,9 +196,9 @@ const getAdmin = asyncHandler(async (req, res) => {
 const getRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const room = await Room.findOne({ roomId: id });
-  res.status(200).json({
+  res.status(200).json(
     room,
-  });
+  );
 });
 
 module.exports = {
