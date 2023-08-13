@@ -97,15 +97,17 @@ const deleteUser = asyncHandler(async(req,res) => {
 
 const deleteAdmin = asyncHandler(async(req,res) => {
   const {id} = req.params;
-  //first delete the Admin in corresponding Room
   const admin = await Admin.findOne({username:id});
-  for(var i in admin.roomId){
-    const room = await Room.findOneAndUpdate(
-      {roomId: admin.roomId[i]},
-      { $pull: { admins: id } }
-    );
+  for (const roomId of admin.roomId) {
+    const room = await Room.findById(roomId);
+    if (room) {
+      for (const username of room.users) {
+        await User.findOneAndDelete({ username });
+      }
+      await room.remove();
+    }
   }
-  await Admin.findOneAndDelete({username:id});
+  await admin.remove();
   res.json({
     message:"Admin Successfully Deleted"
   })
@@ -148,5 +150,48 @@ const loginAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteRoom = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  const room = await Room.findOne({roomId:id});
+  for (const username of room.users) {
+    await User.findOneAndDelete({ username });
+  }
+  await room.remove();
+  res.status(200).json({
+    message:"Room Successfully Deleted"
+  });
+});
 
-module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser,deleteAdmin,loginAdmin};
+const addRoom = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  const {roomId} = req.params;
+  const admin = await Admin.findOne({username:id});
+  admin.roomId.push(roomId);
+  await admin.save();
+  res.status(200).json({
+    message:"Room Successfully Added"
+  });
+});
+
+const disableRoom = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  const room = await Room.findOne({roomId:id});
+  room.isDisabled = true;
+  await room.save();
+  res.status(200).json({
+    message:"Room Successfully Disabled"
+  });
+});
+
+const enableRoom = asyncHandler(async(req,res) => {
+  const {id} = req.params;
+  const room = await Room.findOne({roomId:id});
+  room.isDisabled = false;
+  await room.save();
+  res.status(200).json({
+    message:"Room Successfully Disabled"
+  });
+});
+
+
+module.exports = {getAllUsers, getAllAdmins,createNewRoom, getAllRooms,deleteUser,deleteAdmin,loginAdmin,deleteRoom,enableRoom,disableRoom,addRoom};

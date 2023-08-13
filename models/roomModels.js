@@ -11,6 +11,10 @@ const roomSchema = new mongoose.Schema(
         },
         description:{
             type: String,
+        },
+        isDisabled:{
+            type: Boolean,
+            default: false,
         }
     },{
         timestamps: true,
