@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Room = require("../models/roomModels");
 const Admin = require("../models/adminModel");
+const Announcement = require("../models/announcementModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -56,6 +57,29 @@ const createNewRoom = asyncHandler(async (req, res) => {
     users: [],
     description,
   });
+  const hashedPassword = await bcrypt.hash(roomId, 10);
+  const user = await User.create({
+    username: roomId,
+    password: hashedPassword,
+    name: roomId,
+    roomId,
+    role: "Host",
+  });
+  const hmm = await Room.findOneAndUpdate(
+    { roomId: roomId },
+    {
+      $push: { users: roomId },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const an = await Announcement.create({
+    roomId,
+    message: " ",
+  });
+
   if (room) {
     console.log("Room created");
     res.status(201).json({
@@ -95,25 +119,23 @@ const deleteAdmin = asyncHandler(async (req, res) => {
   console.log(admin.roomId);
   for (const roomId in admin.roomId) {
     console.log(admin.roomId[roomId]);
-    const room = await Room.findOne({roomId: admin.roomId[roomId]});
+    const room = await Room.findOne({ roomId: admin.roomId[roomId] });
     // console.log(room.roomId);
     if (room) {
       console.log(room.roomId);
-      for(const user in room.users){
+      for (const user in room.users) {
         console.log(room.users[user]);
-        await User.findOneAndDelete({username: room.users[user]});
-        if(room.users[user] !== id){
+        await User.findOneAndDelete({ username: room.users[user] });
+        if (room.users[user] !== id) {
           const admin = await Admin.findOne({ username: room.users[username] });
           if (admin) {
-            for(const roomId in admin.roomId){
+            for (const roomId in admin.roomId) {
               console.log(admin.roomId[roomId]);
-              if(admin.roomId[roomId]===id){
-                var updated = admin.roomId.splice(roomId,1);
-              //  await admin.save();
+              if (admin.roomId[roomId] === id) {
+                var updated = admin.roomId.splice(roomId, 1);
+                //  await admin.save();
               }
-             
             }
-           
           }
         }
       }
@@ -177,10 +199,10 @@ const deleteRoom = asyncHandler(async (req, res) => {
     await User.findOneAndDelete({ username: room.users[username] });
     const admin = await Admin.findOne({ username: room.users[username] });
     if (admin) {
-      for(const roomId in admin.roomId){
+      for (const roomId in admin.roomId) {
         console.log(admin.roomId[roomId]);
-        if(admin.roomId[roomId]===id){
-          var updated = admin.roomId.splice(roomId,1);
+        if (admin.roomId[roomId] === id) {
+          var updated = admin.roomId.splice(roomId, 1);
         }
       }
       await admin.save();
@@ -243,9 +265,25 @@ const getAdmin = asyncHandler(async (req, res) => {
 const getRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const room = await Room.findOne({ roomId: id });
-  res.status(200).json(
-    room,
-  );
+  res.status(200).json(room);
+});
+
+const newAnnouncement = asyncHandler(async (req, res) => {
+  const { roomId } = req.params;
+  const { announcement } = req.body;
+  console.log(announcement);
+  const room = Announcement.findOne({ roomId });
+  if (room) {
+    room.message = announcement;
+    await Announcement.findOneAndUpdate({ roomId },
+      { message: announcement });
+    res.status(200).json({
+      message: "Announcement Updated",
+    });
+  } else {
+   res.status(404);
+    throw new Error("Room not found");
+  }
 });
 
 module.exports = {
@@ -262,4 +300,5 @@ module.exports = {
   addRoom,
   getAdmin,
   getRoom,
+  newAnnouncement,
 };

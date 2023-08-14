@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const User =  require("../models/userModel.js");
+const Announcement = require("../models/announcementModel.js");
 //@desc Change Status of a user to True
 //@route PUT /api/user/changeStatusTrue/:id
 //@access public
@@ -27,4 +28,11 @@ const setDeviceInfo = asyncHandler(async (req,res) => {
     )
 });
 
-module.exports = {changeStatusTrue,changeStatusFalse,setDeviceInfo};
+const getAnnouncement = asyncHandler(async (req,res) => {
+    const { id } = req.params;
+    console.log(id);
+    const an = await Announcement.findOne({roomId: id});
+    res.json(an);
+});
+
+module.exports = {changeStatusTrue,changeStatusFalse,setDeviceInfo,getAnnouncement};
