@@ -89,17 +89,42 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 const deleteAdmin = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   const admin = await Admin.findOne({ username: id });
-  for (const roomId of admin.roomId) {
-    const room = await Room.findById(roomId);
+  console.log(admin.username);
+  console.log(admin.roomId);
+  for (const roomId in admin.roomId) {
+    console.log(admin.roomId[roomId]);
+    const room = await Room.findOne({roomId: admin.roomId[roomId]});
+    // console.log(room.roomId);
     if (room) {
-      for (const username of room.users) {
-        await User.findOneAndDelete({ username });
+      console.log(room.roomId);
+      for(const user in room.users){
+        console.log(room.users[user]);
+        await User.findOneAndDelete({username: room.users[user]});
+        if(room.users[user] !== id){
+          const admin = await Admin.findOne({ username: room.users[username] });
+          if (admin) {
+            for(const roomId in admin.roomId){
+              console.log(admin.roomId[roomId]);
+              if(admin.roomId[roomId]===id){
+                var updated = admin.roomId.splice(roomId,1);
+              //  await admin.save();
+              }
+             
+            }
+           
+          }
+        }
       }
-      await room.remove();
+      await Room.findOneAndDelete({ roomId: admin.roomId[roomId] });
+      console.log("Room Deleted");
+    } else {
+      console.log("Room not found");
     }
   }
-  await admin.remove();
+  await Admin.findOneAndDelete({ username: id });
+  console.log("Admin Deleted");
   res.json({
     message: "Admin Successfully Deleted",
   });
