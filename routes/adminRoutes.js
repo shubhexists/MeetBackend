@@ -17,7 +17,7 @@ router.delete("/deleteUser/:id",deleteUser);
 router.delete("/deleteAdmin/:id",deleteAdmin);
 router.delete("/deleteRoom/:id",deleteRoom);
 router.put("/enableRoom/:id",enableRoom);
-router.put("/disableRoom/:id",disableRoom);
+router.put("/disableRoom/:roomId",disableRoom);
 router.put("/addRoom/:id/:roomId",addRoom);
 
 module.exports = router;

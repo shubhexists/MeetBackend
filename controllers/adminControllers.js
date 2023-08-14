@@ -195,17 +195,25 @@ const deleteRoom = asyncHandler(async (req, res) => {
 const addRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { roomId } = req.params;
+  console.log(roomId);
   const admin = await Admin.findOne({ username: id });
   admin.roomId.push(roomId);
   await admin.save();
+  console.log("Room added to admin");
+  const room = await Room.findOne({ roomId });
+  console.log(room.roomId);
+  room.users.push(id);
+  await room.save();
+  console.log("Admin added to room");
   res.status(200).json({
     message: "Room Successfully Added",
   });
 });
 
 const disableRoom = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const room = await Room.findOne({ roomId: id });
+  const { roomId } = req.params;
+  console.log(roomId);
+  const room = await Room.findOne({ roomId });
   room.isDisabled = true;
   await room.save();
   res.status(200).json({
@@ -215,11 +223,12 @@ const disableRoom = asyncHandler(async (req, res) => {
 
 const enableRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   const room = await Room.findOne({ roomId: id });
   room.isDisabled = false;
   await room.save();
   res.status(200).json({
-    message: "Room Successfully Disabled",
+    message: "Room Successfully Enabled",
   });
 });
 
