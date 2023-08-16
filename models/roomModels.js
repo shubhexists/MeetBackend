@@ -9,10 +9,18 @@ const roomSchema = new mongoose.Schema(
             type: [String],
             required: [true, "Please enter the role"],
         },
+        password: {
+          type: String,
+          required: [true, "Please enter the room password."],  
+        },
         description:{
             type: String,
         },
         isDisabled:{
+            type: Boolean,
+            default: false,
+        },
+        isHostIn:{
             type: Boolean,
             default: false,
         }

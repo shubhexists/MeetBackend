@@ -286,6 +286,62 @@ const newAnnouncement = asyncHandler(async (req, res) => {
   }
 });
 
+const changeAdminPassword = asyncHandler(async (req, res) => {
+  const { userId , password, newPassword } = req.body;
+  const admin = await Admin.findOne({ username: userId });
+  if (admin && (await bcrypt.compare(password, admin.password))) {
+    const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
+    await Admin.findOneAndUpdate({ username: userId },
+      { password: newEncryptedpassword });
+    res.status(200).json({
+      message: "Password Updated",
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid username or password");
+  }
+});
+
+const setHostInRoom = asyncHandler(async (req, res) => {
+  const { roomId } = req.params;
+  const host = Room.findOneAndUpdate({ roomId },{
+    isHostIn: true,
+  });
+  res.status(200).json({
+    message: "Host In The Room",
+  });
+});
+
+const setHostOutRoom = asyncHandler(async (req, res) => {
+  const { roomId } = req.params;
+  const host = Room.findOneAndUpdate({ roomId },{
+    isHostIn: false,
+  });
+  res.status(200).json({
+    message: "Host Out The Room",
+  });
+});
+
+const setUserDisabled = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate({ username: userId },{
+    isDisabled: true,
+  });
+  res.status(200).json({
+    message: "User Disabled",
+  });
+});
+
+const setUserEnabled = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate({ username: userId },{
+    isDisabled: false,
+  });
+  res.status(200).json({
+    message: "User Enabled",
+  });
+});
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
@@ -301,4 +357,9 @@ module.exports = {
   getAdmin,
   getRoom,
   newAnnouncement,
+  changeAdminPassword,
+  setHostInRoom,
+  setHostOutRoom,
+  setUserDisabled,
+  setUserEnabled,
 };

@@ -5,6 +5,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please enter the name"],
         },
+        isDisabled:{
+            type: Boolean,
+            default: false,
+        },  
         username: {
             type: String,
             required: [true, "Please enter the username"],
@@ -28,6 +32,9 @@ const userSchema = new mongoose.Schema(
         isOnline:{
             type: Boolean,
             default: false,
+        },
+        referal:{
+            type: String,
         }
     },{
         timestamps: true,

@@ -11,7 +11,7 @@ const Admin = require("../models/adminModel");
 //Only Owner can register a user
 const registerUser = asyncHandler(async (req, res) => {
   console.log("Registering User");
-  const { name, username, password, roomId, role } = req.body;
+  const { name, username, password, roomId, role, referal } = req.body;
   if (!name || !username || !password || !roomId || !role) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -36,7 +36,8 @@ const registerUser = asyncHandler(async (req, res) => {
     roomId,
     role,
     deviceInfo: "",
-    isOnline: false
+    isOnline: false,
+    referal,
   });
 
   const room = await Room.findOneAndUpdate(
@@ -76,24 +77,36 @@ const loginUser = asyncHandler(async (req, res) => {
   }
   const user = await User.findOne({ username });
   if (user && (await bcrypt.compare(password, user.password))) {
-    const accessToken = jwt.sign(
-      {
-        user: {
-          _id: user._id,
-          username: user.username,
-          name: user.name,
-          roomId: user.roomId,
-          role: user.role,
+    const room = await Room.findOne({ roomId: user.roomId });
+    if (room.isDisabled) {
+      res.status(401).json({
+        message: "Room is disabled. Contact your admin for more details.",
+      });
+    } else {
+      if (room.isHostIn){
+      const accessToken = jwt.sign(
+        {
+          user: {
+            _id: user._id,
+            username: user.username,
+            name: user.name,
+            roomId: user.roomId,
+            role: user.role,
+          },
         },
-      },
-      process.env.ACCESS_TOKEN_SECRET
-    );
-    res.status(200).json({
-      accessToken,
-      username: user.username,
-      roomId: user.roomId,
-      role: user.role,
-    });
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      res.status(200).json({
+        accessToken,
+        username: user.username,
+        roomId: user.roomId,
+        role: user.role,
+      });
+    } else {
+      res.status(401).json({
+        message: "Host is not in the room. Kindly wait for the host to join.",
+      });
+    }}
   } else {
     res.status(401);
     throw new Error("Invalid username or password");
@@ -138,7 +151,6 @@ const createOwner = asyncHandler(async (req, res) => {
     throw new Error("Invalid user data");
   }
 });
-
 
 //@desc Create a new Admin
 //@route POST /api/auth/createAdmin
@@ -202,4 +214,4 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, loginUser, createOwner, registerAdmin};
+module.exports = { registerUser, loginUser, createOwner, registerAdmin };
