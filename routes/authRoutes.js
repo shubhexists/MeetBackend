@@ -5,8 +5,8 @@ const validateToken = require("../middleware/validateTokenHandler");
 const checkDeviceInfo = require("../middleware/checkDeviceInfo");
 const router = express.Router();
 
-router.post("/register", registerUser); //Add JWT (validateToken and checkOwner)
-router.post("/login", loginUser); //Add check Device Info
+router.post("/register", registerUser);
+router.post("/login", loginUser); 
 router.post("/createOwner", createOwner);
 router.post("/createAdmin", registerAdmin);
 
