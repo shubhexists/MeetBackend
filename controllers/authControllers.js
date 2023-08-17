@@ -157,9 +157,9 @@ const createOwner = asyncHandler(async (req, res) => {
 //@access public
 const registerAdmin = asyncHandler(async (req, res) => {
   console.log("Registering Admin");
-  const { name, username, password, roomId, role } = req.body;
+  const { name, username, password, role } = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE
-  if (!name || !username || !password || !roomId || !role) {
+  if (!name || !username || !password || !role) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
@@ -169,36 +169,14 @@ const registerAdmin = asyncHandler(async (req, res) => {
     throw new Error("Username already exists");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  for (var i in roomId) {
-    // console.log(i);
-    const roomExists = await Room.findOne({
-      roomId: roomId[i],
-    });
-    if (!roomExists) {
-      res.status(400);
-      throw new Error("Room does not exists. Kindly make the Room first.");
-    }
-  }
   const admin = await Admin.create({
     name,
     username,
     password: hashedPassword,
-    roomId,
+    roomId: [],
     role,
   });
   console.log("Admin created");
-  for (var i in roomId) {
-    // console.log(i);
-    const room = await Room.findOneAndUpdate(
-      { roomId: roomId[i] },
-      {
-        $push: { users: username },
-      },
-      {
-        new: true,
-      }
-    );
-  }
   if (admin) {
     console.log("Admin created");
     res.status(201).json({
