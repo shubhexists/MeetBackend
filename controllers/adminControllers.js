@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 //@desc get all users
 //@route GET /api/admin/getusers
 //@access public
-
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({
     role: "User",
@@ -40,7 +39,7 @@ const getAllRooms = asyncHandler(async (req, res) => {
 //@route GET /api/admin/createRoom
 //@access public
 const createNewRoom = asyncHandler(async (req, res) => {
-  const { roomId, description } = req.body;
+  const { roomId, password,description } = req.body;
   if (!roomId) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -54,10 +53,11 @@ const createNewRoom = asyncHandler(async (req, res) => {
   }
   const room = await Room.create({
     roomId,
+    password,
     users: [],
     description,
   });
-  const hashedPassword = await bcrypt.hash(roomId, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     username: roomId,
     password: hashedPassword,
