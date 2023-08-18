@@ -288,11 +288,15 @@ const newAnnouncement = asyncHandler(async (req, res) => {
 
 const changeAdminPassword = asyncHandler(async (req, res) => {
   const { userId , password, newPassword } = req.body;
+  console.log(userId);
+  console.log(password);
+  console.log(newPassword);
   const admin = await Admin.findOne({ username: userId });
   if (admin && (await bcrypt.compare(password, admin.password))) {
     const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
     await Admin.findOneAndUpdate({ username: userId },
       { password: newEncryptedpassword });
+      console.log("Password Updated");
     res.status(200).json({
       message: "Password Updated",
     });
