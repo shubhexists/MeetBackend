@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
 const Announcement = require("../models/announcementModel.js");
 //@desc Change Status of a user to True
@@ -35,7 +36,9 @@ const getAnnouncement = asyncHandler(async (req, res) => {
 const changeUserPassword = asyncHandler(async (req, res) => {
   const { userId, password, newpassword } = req.body;
   const user = await User.findOne({ username: userId });
+  console.log(user);
   if (user && (await bcrypt.compare(password, user.password))) {
+    console.log("Password Matched");
     const newEncryptedpassword = await bcrypt.hash(newpassword, 10);
     await User.findOneAndUpdate(
       { username: userId },
@@ -45,6 +48,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
     );
     res.json({ message: "Password Changed" });
   } else {
+    console.log("Password Not Matched");
     res.status(401);
     throw new Error("Invalid Password");
   }
