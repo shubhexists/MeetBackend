@@ -39,7 +39,7 @@ const getAllRooms = asyncHandler(async (req, res) => {
 //@route GET /api/admin/createRoom
 //@access public
 const createNewRoom = asyncHandler(async (req, res) => {
-  const { roomId, password,description } = req.body;
+  const { roomId, password, description } = req.body;
   if (!roomId) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -275,28 +275,29 @@ const newAnnouncement = asyncHandler(async (req, res) => {
   const room = Announcement.findOne({ roomId });
   if (room) {
     room.message = announcement;
-    await Announcement.findOneAndUpdate({ roomId },
-      { message: announcement });
+    await Announcement.findOneAndUpdate({ roomId }, { message: announcement });
     res.status(200).json({
       message: "Announcement Updated",
     });
   } else {
-   res.status(404);
+    res.status(404);
     throw new Error("Room not found");
   }
 });
 
 const changeAdminPassword = asyncHandler(async (req, res) => {
-  const { userId , password, newPassword } = req.body;
+  const { userId, password, newPassword } = req.body;
   console.log(userId);
   console.log(password);
   console.log(newPassword);
   const admin = await Admin.findOne({ username: userId });
   if (admin && (await bcrypt.compare(password, admin.password))) {
     const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
-    await Admin.findOneAndUpdate({ username: userId },
-      { password: newEncryptedpassword });
-      console.log("Password Updated");
+    await Admin.findOneAndUpdate(
+      { username: userId },
+      { password: newEncryptedpassword }
+    );
+    console.log("Password Updated");
     res.status(200).json({
       message: "Password Updated",
     });
@@ -308,9 +309,12 @@ const changeAdminPassword = asyncHandler(async (req, res) => {
 
 const setHostInRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  const host = Room.findOneAndUpdate({ roomId },{
-    isHostIn: true,
-  });
+  const host = Room.findOneAndUpdate(
+    { roomId },
+    {
+      isHostIn: true,
+    }
+  );
   res.status(200).json({
     message: "Host In The Room",
   });
@@ -318,9 +322,12 @@ const setHostInRoom = asyncHandler(async (req, res) => {
 
 const setHostOutRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  const host = Room.findOneAndUpdate({ roomId },{
-    isHostIn: false,
-  });
+  const host = Room.findOneAndUpdate(
+    { roomId },
+    {
+      isHostIn: false,
+    }
+  );
   res.status(200).json({
     message: "Host Out The Room",
   });
@@ -328,9 +335,12 @@ const setHostOutRoom = asyncHandler(async (req, res) => {
 
 const setUserDisabled = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate({ username: userId },{
-    isDisabled: true,
-  });
+  const user = User.findOneAndUpdate(
+    { username: userId },
+    {
+      isDisabled: true,
+    }
+  );
   res.status(200).json({
     message: "User Disabled",
   });
@@ -338,11 +348,70 @@ const setUserDisabled = asyncHandler(async (req, res) => {
 
 const setUserEnabled = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate({ username: userId },{
-    isDisabled: false,
-  });
+  const user = User.findOneAndUpdate(
+    { username: userId },
+    {
+      isDisabled: false,
+    }
+  );
   res.status(200).json({
     message: "User Enabled",
+  });
+});
+
+const setIsMuted = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate(
+    { username: userId },
+    {
+      isMuted: true,
+    }
+  );
+  res.status(200).json({
+    message: "User is Muted",
+  });
+});
+
+const setIsUnmuted = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate(
+    { username: userId },
+    {
+      isMuted: false,
+    }
+  );
+  res.status(200).json({
+    message: "User is Unmuted",
+  });
+});
+
+const setAudioSubscribed = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate(
+    {
+      username: userId,
+    },
+    {
+      isAudioSubscribed: true,
+    }
+  );
+  res.status(200).json({
+    message: "Audio Subscribed",
+  });
+});
+
+const setAudioUnSubscribed = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = User.findOneAndUpdate(
+    {
+      username: userId,
+    },
+    {
+      isAudioSubscribed: false,
+    }
+  );
+  res.status(200).json({
+    message: "Audio Unsubscribed",
   });
 });
 
@@ -366,4 +435,8 @@ module.exports = {
   setHostOutRoom,
   setUserDisabled,
   setUserEnabled,
+  setIsMuted,
+  setIsUnmuted,
+  setAudioSubscribed,
+  setAudioUnSubscribed
 };

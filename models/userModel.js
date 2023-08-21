@@ -35,6 +35,14 @@ const userSchema = new mongoose.Schema(
         },
         referal:{
             type: String,
+        },
+        isMuted:{
+            type:Boolean,
+            default: false,
+        },
+        isAudioSubscribed:{
+            type: Boolean,
+            default : true
         }
     },{
         timestamps: true,
