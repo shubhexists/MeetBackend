@@ -76,40 +76,70 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory");
   }
   const user = await User.findOne({ username });
-  if (user && (await bcrypt.compare(password, user.password))) {
-    const room = await Room.findOne({ roomId: user.roomId });
-    if (room.isDisabled) {
-      res.status(401).json({
-        message: "Room is disabled. Contact your admin for more details.",
-      });
-    } else {
-      if (room.isHostIn){
-      const accessToken = jwt.sign(
-        {
-          user: {
-            _id: user._id,
-            username: user.username,
-            name: user.name,
-            roomId: user.roomId,
-            role: user.role,
+  if (user.role === "Host") {
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const room = await Room.findOne({ roomId: user.roomId });
+      if (room.isDisabled) {
+        res.status(401).json({
+          message: "Room is disabled. Contact your admin for more details.",
+        });
+      } else {
+        const accessToken = jwt.sign(
+          {
+            user: {
+              _id: user._id,
+              username: user.username,
+              name: user.name,
+              roomId: user.roomId,
+              role: user.role,
+            },
           },
-        },
-        process.env.ACCESS_TOKEN_SECRET
-      );
-      res.status(200).json({
-        accessToken,
-        username: user.username,
-        roomId: user.roomId,
-        role: user.role,
-      });
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        res.status(200).json({
+          accessToken,
+          username: user.username,
+          roomId: user.roomId,
+          role: user.role,
+        });
+      }
     } else {
-      res.status(401).json({
-        message: "Host is not in the room. Kindly wait for the host to join.",
-      });
-    }}
+      res.status(401);
+      throw new Error("Invalid username or password");
+    }
   } else {
-    res.status(401);
-    throw new Error("Invalid username or password");
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const room = await Room.findOne({ roomId: user.roomId });
+      if (room.isDisabled) {
+        res.status(401).json({
+          message: "Room is disabled. Contact your admin for more details.",
+        });
+      } else {
+        if(room.isHostIn){
+        const accessToken = jwt.sign(
+          {
+            user: {
+              _id: user._id,
+              username: user.username,
+              name: user.name,
+              roomId: user.roomId,
+              role: user.role,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        res.status(200).json({
+          accessToken,
+          username: user.username,
+          roomId: user.roomId,
+          role: user.role,
+        });
+      }else{
+        res.status(401).json({
+          message: "Host is not in the room. Contact your admin for more details.",
+        });
+      }}
+    }
   }
 });
 

@@ -35,6 +35,8 @@ const getAnnouncement = asyncHandler(async (req, res) => {
 
 const changeUserPassword = asyncHandler(async (req, res) => {
   const { userId, password, newpassword } = req.body;
+  console.log(userId);
+  console.log(password);
   const user = await User.findOne({ username: userId });
   console.log(user);
   if (user && (await bcrypt.compare(password, user.password))) {
