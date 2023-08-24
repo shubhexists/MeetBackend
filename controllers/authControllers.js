@@ -187,9 +187,9 @@ const createOwner = asyncHandler(async (req, res) => {
 //@access public
 const registerAdmin = asyncHandler(async (req, res) => {
   console.log("Registering Admin");
-  const { name, username, password, role } = req.body;
+  const { name, username, password, role, description } = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE
-  if (!name || !username || !password || !role) {
+  if (!name || !username || !password || !role ) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
@@ -204,6 +204,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
     username,
     password: hashedPassword,
     roomId: [],
+    referal: description,
     role,
   });
   console.log("Admin created");

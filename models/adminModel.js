@@ -13,9 +13,20 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter the password"],
     },
+    referal:{
+        type: String,
+    },
+    dateCreated:{
+        type: Date,
+        default: Date.now,
+    },
     roomId:{
         type: [String],
         required: [true, "Please enter the roomId(s) alloted"],
+    },
+    isDisabled: {
+        type: Boolean,
+        default: false
     },
     role:{
         type: String,

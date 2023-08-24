@@ -20,6 +20,10 @@ const roomSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        dateCreated:{
+            type: Date,
+            default: Date.now,
+        },
         isHostIn:{
             type: Boolean,
             default: false,

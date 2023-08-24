@@ -164,28 +164,33 @@ const loginAdmin = asyncHandler(async (req, res) => {
   }
   const admin = await Admin.findOne({ username });
   console.log(admin);
-  if (admin && (await bcrypt.compare(password, admin.password))) {
-    const accessToken = jwt.sign(
-      {
-        admin: {
-          _id: admin._id,
-          username: admin.username,
-          name: admin.name,
-          roomId: admin.roomId,
-          role: admin.role,
-        },
-      },
-      process.env.ACCESS_TOKEN_SECRET
-    );
-    res.status(200).json({
-      accessToken,
-      username: admin.username,
-      roomId: admin.roomId,
-      role: admin.role,
-    });
+  if (admin.isDisabled) {
+    res.status(201);
+    throw new Error("You are disabled, Kindly contact the Owner.");
   } else {
-    res.status(401);
-    throw new Error("Invalid username or password");
+    if (admin && (await bcrypt.compare(password, admin.password))) {
+      const accessToken = jwt.sign(
+        {
+          admin: {
+            _id: admin._id,
+            username: admin.username,
+            name: admin.name,
+            roomId: admin.roomId,
+            role: admin.role,
+          },
+        },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      res.status(200).json({
+        accessToken,
+        username: admin.username,
+        roomId: admin.roomId,
+        role: admin.role,
+      });
+    } else {
+      res.status(401);
+      throw new Error("Invalid username or password");
+    }
   }
 });
 
@@ -415,6 +420,26 @@ const setAudioUnSubscribed = asyncHandler(async (req, res) => {
   });
 });
 
+const disableAdmin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const admin = await Admin.findOne({ username: id });
+  admin.isDisabled = true;
+  await admin.save();
+  res.status(200).json({
+    message: "Admin Successfully Disabled",
+  });
+});
+
+const enableAdmin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const admin = await Admin.findOne({ username: id });
+  admin.isDisabled = false;
+  await admin.save();
+  res.status(200).json({
+    message: "Admin Successfully Disabled",
+  });
+});
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
@@ -438,5 +463,7 @@ module.exports = {
   setIsMuted,
   setIsUnmuted,
   setAudioSubscribed,
-  setAudioUnSubscribed
+  setAudioUnSubscribed,
+  enableAdmin,
+  disableAdmin,
 };
