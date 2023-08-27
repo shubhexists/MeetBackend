@@ -160,11 +160,11 @@ const createOwner = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Username already exists");
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // const hashedPassword = await bcrypt.hash(password, 10);
   const user = await Admin.create({
     name,
     username,
-    password: hashedPassword,
+    password: password,
     roomId: ["All"],
     role: "Owner",
   });
@@ -198,11 +198,11 @@ const registerAdmin = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Username already exists");
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // const hashedPassword = await bcrypt.hash(password, 10);
   const admin = await Admin.create({
     name,
     username,
-    password: hashedPassword,
+    password: password,
     roomId: [],
     referal: description,
     role,
@@ -212,6 +212,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
     console.log("Admin created");
     res.status(201).json({
       _id: admin.id,
+      password: admin.password,
       username: admin.username,
       name: admin.name,
       roomId: admin.roomId,

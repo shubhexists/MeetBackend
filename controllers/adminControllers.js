@@ -168,7 +168,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
     res.status(201);
     throw new Error("You are disabled, Kindly contact the Owner.");
   } else {
-    if (admin && (await bcrypt.compare(password, admin.password))) {
+    if (admin && password === admin.password) {
       const accessToken = jwt.sign(
         {
           admin: {
@@ -296,11 +296,11 @@ const changeAdminPassword = asyncHandler(async (req, res) => {
   console.log(password);
   console.log(newPassword);
   const admin = await Admin.findOne({ username: userId });
-  if (admin && (await bcrypt.compare(password, admin.password))) {
-    const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
+  if (admin && password === admin.password) {
+    // const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
     await Admin.findOneAndUpdate(
       { username: userId },
-      { password: newEncryptedpassword }
+      { password: newPassword }
     );
     console.log("Password Updated");
     res.status(200).json({

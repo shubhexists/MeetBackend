@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema(
         isAudioSubscribed:{
             type: Boolean,
             default : true
+        },
+        lastLogTime:{
+            type: String,
+            default: ""
         }
     },{
         timestamps: true,
