@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed} = require("../controllers/adminControllers.js");
+const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed, changeRoomPassword} = require("../controllers/adminControllers.js");
 
 router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
@@ -11,6 +11,7 @@ router.get("/getRoom/:id",getRoom);
 router.post('/auth/login',loginAdmin); 
 router.post('/createRoom',createNewRoom);
 router.post("/changePassword",changeAdminPassword);
+router.post("/changeRoomPassword",changeRoomPassword);
 
 router.delete("/deleteUser/:id",deleteUser);
 router.delete("/deleteAdmin/:id",deleteAdmin);
