@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed, changeRoomPassword} = require("../controllers/adminControllers.js");
+const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed, changeRoomPassword, enableAdmin, disableAdmin} = require("../controllers/adminControllers.js");
 
 router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
@@ -29,6 +29,8 @@ router.put("/setUserMuted/:userId",setIsMuted);
 router.put("/setUserUnmuted/:userId",setIsUnmuted);
 router.put("/subscribeUserAudio/:userId",setAudioSubscribed);
 router.put("/unsubscribeUserAudio/:userId",setAudioUnSubscribed);
+router.put("/enableAdmin/:id",enableAdmin);
+router.put("/disableAdmin/:id",disableAdmin);
 
 
 module.exports = router;

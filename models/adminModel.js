@@ -4,10 +4,8 @@ const utcDate = new Date(utcTimestamp);
 const istTimestamp = utcTimestamp + (5 * 60 + 30) * 60 * 1000;
 const istDate = new Date(istTimestamp);
 const istYear = istDate.getUTCFullYear();
-const istMonth = istDate.getUTCMonth() + 1; // Months are 0-indexed
+const istMonth = istDate.getUTCMonth() + 1; 
 const istDay = istDate.getUTCDate();
-
-// Format the date in YYYY-MM-DD format
 const formattedISTDate = `${istYear}-${istMonth.toString().padStart(2, '0')}-${istDay.toString().padStart(2, '0')}`;
 
 const adminSchema = new mongoose.Schema({

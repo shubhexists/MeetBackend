@@ -24,7 +24,16 @@ const setDeviceInfo = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { deviceInfo } = req.body;
   await User.findOneAndUpdate({ username: id }, { deviceInfo });
+  res.json({ message: "Device Info Changed" });
 });
+
+const changeDevice = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findOne({ username: id });
+  user.deviceInfo = "";
+  await user.save();
+  res.json({ message: "Device Info Changed" });
+})
 
 const getAnnouncement = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -56,10 +65,20 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   }
 });
 
+const changeLogTime = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { logTime } = req.body;
+  const user = await User.findOne({ username: id });
+  user.lastLogTime = logTime;
+  await user.save();  
+  res.json({ message: "Log Time Changed" });
+});
 
 module.exports = {
   changeStatusTrue,
   changeStatusFalse,
+  changeLogTime,
+  changeDevice,
   setDeviceInfo,
   getAnnouncement,
   changeUserPassword,
