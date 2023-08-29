@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed, changeRoomPassword, enableAdmin, disableAdmin} = require("../controllers/adminControllers.js");
+const {getAllUsers,getAllAdmins, createNewRoom, getAllRooms, deleteUser, deleteAdmin, loginAdmin, deleteRoom, enableRoom, disableRoom, addRoom, getAdmin, getRoom, newAnnouncement, changeAdminPassword, setHostInRoom, setHostOutRoom, setUserDisabled, setUserEnabled, setIsMuted, setIsUnmuted, setAudioSubscribed, setAudioUnSubscribed, changeRoomPassword, enableAdmin, disableAdmin, getSocketData} = require("../controllers/adminControllers.js");
 
 router.get("/getusers",getAllUsers);
 router.get("/getadmins",getAllAdmins);
 router.get("/getrooms",getAllRooms);
 router.get("/getAdmin/:id",getAdmin);
 router.get("/getRoom/:id",getRoom);
+router.get("/getSocketData/:id",getSocketData);
 
 router.post('/auth/login',loginAdmin); 
 router.post('/createRoom',createNewRoom);

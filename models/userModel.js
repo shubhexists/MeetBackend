@@ -47,6 +47,9 @@ const userSchema = new mongoose.Schema(
         lastLogTime:{
             type: String,
             default: ""
+        },
+        isSpeaking:{
+            type: Boolean
         }
     },{
         timestamps: true,

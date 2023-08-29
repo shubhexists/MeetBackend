@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
 const Announcement = require("../models/announcementModel.js");
+
 //@desc Change Status of a user to True
 //@route PUT /api/user/changeStatusTrue/:id
 //@access public
@@ -74,6 +75,26 @@ const changeLogTime = asyncHandler(async (req, res) => {
   res.json({ message: "Log Time Changed" });
 });
 
+const setIsSpeaking = asyncHandler(async (req,res) => {
+  const { id } = req.params;
+  const user = await User.findOne({username: id});
+  user.isSpeaking = true;
+  await user.save();
+  res.json({
+    message: "User is now speaking"
+  });
+});
+
+const setIsMute = asyncHandler(async (req,res) => {
+  const { id } = req.params;
+  const user = await User.findOne({username: id});
+  user.isSpeaking = false;
+  await user.save();
+  res.json({
+    message: "User is now Muted"
+  });
+});
+
 module.exports = {
   changeStatusTrue,
   changeStatusFalse,
@@ -82,4 +103,6 @@ module.exports = {
   setDeviceInfo,
   getAnnouncement,
   changeUserPassword,
+  setIsSpeaking,
+  setIsMute
 };

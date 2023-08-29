@@ -456,6 +456,16 @@ const enableAdmin = asyncHandler(async (req, res) => {
   });
 });
 
+const getSocketData = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findOne({ username: id });
+  res.status(200).json({
+    username: id,
+    muted: user.isMuted,
+    speaking: user.isSpeaking,
+  });
+});
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
@@ -463,6 +473,7 @@ module.exports = {
   getAllRooms,
   deleteUser,
   deleteAdmin,
+  getSocketData,
   loginAdmin,
   deleteRoom,
   enableRoom,
