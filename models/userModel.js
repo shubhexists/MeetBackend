@@ -49,7 +49,8 @@ const userSchema = new mongoose.Schema(
             default: ""
         },
         isSpeaking:{
-            type: Boolean
+            type: Boolean,
+            default: false,
         }
     },{
         timestamps: true,
