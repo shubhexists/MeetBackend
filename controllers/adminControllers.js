@@ -213,6 +213,7 @@ const deleteRoom = asyncHandler(async (req, res) => {
       await admin.save();
     }
   }
+  await Announcement.findOneAndDelete({ roomId: id });
   await Room.findOneAndDelete({ roomId: id });
   res.status(200).json({
     message: "Room Successfully Deleted",
@@ -277,6 +278,7 @@ const newAnnouncement = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
   const { announcement } = req.body;
   console.log(announcement);
+  console.log(roomId);
   const room = Announcement.findOne({ roomId });
   if (room) {
     room.message = announcement;
@@ -285,6 +287,7 @@ const newAnnouncement = asyncHandler(async (req, res) => {
       message: "Announcement Updated",
     });
   } else {
+    console.log("Room not found");
     res.status(404);
     throw new Error("Room not found");
   }
@@ -339,7 +342,9 @@ const setHostOutRoom = asyncHandler(async (req, res) => {
 });
 
 const setUserDisabled = asyncHandler(async (req, res) => {
+  console.log("User Disabled");
   const { userId } = req.params;
+  console.log(userId);
   const user = User.findOneAndUpdate(
     { username: userId },
     {
@@ -353,6 +358,7 @@ const setUserDisabled = asyncHandler(async (req, res) => {
 
 const setUserEnabled = asyncHandler(async (req, res) => {
   const { userId } = req.params;
+  console.log(userId);
   const user = User.findOneAndUpdate(
     { username: userId },
     {

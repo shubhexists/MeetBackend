@@ -54,7 +54,7 @@ router.put("/addRoom/:id/:roomId", addRoom);
 router.put("/announcement/:roomId", newAnnouncement);
 router.put("/setHostInRoom/:roomId", setHostInRoom);
 router.put("/setHostOutRoom/:roomId", setHostOutRoom);
-router.put("setUserDisabled/:userId", setUserDisabled);
+router.put("/setUserDisabled/:userId", setUserDisabled);
 router.put("/setUserEnabled/:userId", setUserEnabled);
 router.put("/setUserMuted/:userId", setIsMuted);
 router.put("/setUserUnmuted/:userId", setIsUnmuted);

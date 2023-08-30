@@ -115,7 +115,7 @@ const loginUser = asyncHandler(async (req, res) => {
           message: "Room is disabled. Contact your admin for more details.",
         });
       } else {
-        if(room.isHostIn){
+        // if(room.isHostIn){
         const accessToken = jwt.sign(
           {
             user: {
@@ -134,11 +134,12 @@ const loginUser = asyncHandler(async (req, res) => {
           roomId: user.roomId,
           role: user.role,
         });
-      }else{
-        res.status(401).json({
-          message: "Host is not in the room. Contact your admin for more details.",
-        });
-      }}
+      // }else{
+      //   res.status(401).json({
+      //     message: "Host is not in the room. Contact your admin for more details.",
+      //   });
+      // }
+    }
     }
   }
 });
