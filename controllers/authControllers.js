@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Username already exists");
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // const hashedPassword = await bcrypt.hash(password, 10);
   const roomExists = await Room.findOne({
     roomId,
   });
@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     username,
-    password: hashedPassword,
+    password: password,
     roomId,
     role,
     deviceInfo: "",
@@ -77,7 +77,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
   const user = await User.findOne({ username });
   if (user.role === "Host") {
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && password === user.password) {
       const room = await Room.findOne({ roomId: user.roomId });
       if (room.isDisabled) {
         res.status(401).json({
@@ -108,7 +108,7 @@ const loginUser = asyncHandler(async (req, res) => {
       throw new Error("Invalid username or password");
     }
   } else {
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && password === user.password) {
       const room = await Room.findOne({ roomId: user.roomId });
       if (room.isDisabled) {
         res.status(401).json({

@@ -57,10 +57,10 @@ const createNewRoom = asyncHandler(async (req, res) => {
     users: [],
     description,
   });
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     username: roomId,
-    password: hashedPassword,
+    password: password,
     name: roomId,
     roomId,
     role: "Host",

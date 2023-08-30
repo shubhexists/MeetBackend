@@ -49,13 +49,13 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   console.log(password);
   const user = await User.findOne({ username: userId });
   console.log(user);
-  if (user && (await bcrypt.compare(password, user.password))) {
+  if (user && password === user.password) {
     console.log("Password Matched");
-    const newEncryptedpassword = await bcrypt.hash(newpassword, 10);
+    // const newEncryptedpassword = await bcrypt.hash(newpassword, 10);
     await User.findOneAndUpdate(
       { username: userId },
       {
-        password: newEncryptedpassword,
+        password: newpassword,
       }
     );
     res.json({ message: "Password Changed" });
