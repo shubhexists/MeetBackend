@@ -466,6 +466,16 @@ const getSocketData = asyncHandler(async (req, res) => {
   });
 });
 
+const changeUserPassword = asyncHandler(async (req, res) => {
+  const {userId , newPassword} = req.body;
+  const user = await User.findOne({username: userId});
+  user.password = newPassword;
+  await user.save();
+  res.status(200).json({
+    message: "Password Updated",
+  });
+});
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
@@ -494,4 +504,5 @@ module.exports = {
   setAudioUnSubscribed,
   enableAdmin,
   disableAdmin,
+  changeUserPassword
 };
