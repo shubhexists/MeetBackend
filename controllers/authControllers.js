@@ -84,6 +84,8 @@ const loginUser = asyncHandler(async (req, res) => {
           message: "Room is disabled. Contact your admin for more details.",
         });
       } else {
+        room.isHostIn = true;
+        await room.save();
         const accessToken = jwt.sign(
           {
             user: {

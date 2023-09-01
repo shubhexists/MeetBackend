@@ -330,12 +330,14 @@ const setHostInRoom = asyncHandler(async (req, res) => {
 
 const setHostOutRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  const host = Room.findOneAndUpdate(
+  console.log(roomId);
+  const host = await Room.findOneAndUpdate(
     { roomId },
     {
       isHostIn: false,
     }
   );
+  console.log("Host Out The Room");
   res.status(200).json({
     message: "Host Out The Room",
   });
