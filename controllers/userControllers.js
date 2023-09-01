@@ -24,7 +24,11 @@ const changeStatusFalse = asyncHandler(async (req, res) => {
 const setDeviceInfo = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { deviceInfo } = req.body;
-  await User.findOneAndUpdate({ username: id }, { deviceInfo });
+  const user = await User.findOne({ username: id });
+  if(user.deviceInfo === "" || user.deviceInfo === undefined) {
+    user.deviceInfo = deviceInfo;
+  }
+  await user.save();
   res.json({ message: "Device Info Changed" });
 });
 
@@ -69,6 +73,8 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 const changeLogTime = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { logTime } = req.body;
+  console.log(id);
+  console.log(logTime);
   const user = await User.findOne({ username: id });
   user.lastLogTime = logTime;
   await user.save();  

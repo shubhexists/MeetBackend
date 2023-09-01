@@ -117,31 +117,38 @@ const loginUser = asyncHandler(async (req, res) => {
           message: "Room is disabled. Contact your admin for more details.",
         });
       } else {
-        if(room.isHostIn){
-        const accessToken = jwt.sign(
-          {
-            user: {
-              _id: user._id,
+        if (room.isHostIn) {
+          if (user.isDisabled !== true) {
+            const accessToken = jwt.sign(
+              {
+                user: {
+                  _id: user._id,
+                  username: user.username,
+                  name: user.name,
+                  roomId: user.roomId,
+                  role: user.role,
+                },
+              },
+              process.env.ACCESS_TOKEN_SECRET
+            );
+            res.status(200).json({
+              accessToken,
               username: user.username,
-              name: user.name,
               roomId: user.roomId,
               role: user.role,
-            },
-          },
-          process.env.ACCESS_TOKEN_SECRET
-        );
-        res.status(200).json({
-          accessToken,
-          username: user.username,
-          roomId: user.roomId,
-          role: user.role,
-        });
-      }else{
-        res.status(401).json({
-          message: "Host is not in the room. Contact your admin for more details.",
-        });
+            });
+          } else {
+            res.status(401).json({
+              message: "User is disabled. Contact your admin for more details.",
+            });
+          }
+        } else {
+          res.status(401).json({
+            message:
+              "Host is not in the room. Contact your admin for more details.",
+          });
+        }
       }
-    }
     }
   }
 });
@@ -192,7 +199,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
   console.log("Registering Admin");
   const { name, username, password, role, description } = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE
-  if (!name || !username || !password || !role ) {
+  if (!name || !username || !password || !role) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }

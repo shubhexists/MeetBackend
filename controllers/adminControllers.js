@@ -279,7 +279,7 @@ const newAnnouncement = asyncHandler(async (req, res) => {
   const { announcement } = req.body;
   console.log(announcement);
   console.log(roomId);
-  const room = Announcement.findOne({ roomId });
+  const room = await Announcement.findOne({ roomId });
   if (room) {
     room.message = announcement;
     await Announcement.findOneAndUpdate({ roomId }, { message: announcement });
@@ -317,7 +317,7 @@ const changeAdminPassword = asyncHandler(async (req, res) => {
 
 const setHostInRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  const host = Room.findOneAndUpdate(
+  const host = await Room.findOneAndUpdate(
     { roomId },
     {
       isHostIn: true,
@@ -347,7 +347,7 @@ const setUserDisabled = asyncHandler(async (req, res) => {
   console.log("User Disabled");
   const { userId } = req.params;
   console.log(userId);
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { username: userId },
     {
       isDisabled: true,
@@ -361,7 +361,7 @@ const setUserDisabled = asyncHandler(async (req, res) => {
 const setUserEnabled = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   console.log(userId);
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { username: userId },
     {
       isDisabled: false,
@@ -374,7 +374,7 @@ const setUserEnabled = asyncHandler(async (req, res) => {
 
 const setIsMuted = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { username: userId },
     {
       isMuted: true,
@@ -387,7 +387,7 @@ const setIsMuted = asyncHandler(async (req, res) => {
 
 const setIsUnmuted = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     { username: userId },
     {
       isMuted: false,
@@ -400,7 +400,7 @@ const setIsUnmuted = asyncHandler(async (req, res) => {
 
 const setAudioSubscribed = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     {
       username: userId,
     },
@@ -415,7 +415,7 @@ const setAudioSubscribed = asyncHandler(async (req, res) => {
 
 const setAudioUnSubscribed = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = User.findOneAndUpdate(
+  const user = await User.findOneAndUpdate(
     {
       username: userId,
     },
