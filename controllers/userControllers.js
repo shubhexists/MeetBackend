@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
+const Room = require("../models/roomModel.js");
 const Announcement = require("../models/announcementModel.js");
 
 //@desc Change Status of a user to True
@@ -101,12 +102,20 @@ const setIsMute = asyncHandler(async (req,res) => {
   });
 });
 
+const getRoomUsers = asyncHandler(async (req,res) => {
+  const { id } = req.params;
+  const room = await Room.findOne({roomId: id});
+  const users = room.users;
+  res.json({"users": users});
+});
+
 module.exports = {
   changeStatusTrue,
   changeStatusFalse,
   changeLogTime,
   changeDevice,
   setDeviceInfo,
+  getRoomUsers,
   getAnnouncement,
   changeUserPassword,
   setIsSpeaking,

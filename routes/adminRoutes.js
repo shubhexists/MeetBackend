@@ -29,6 +29,7 @@ const {
   disableAdmin,
   getSocketData,
   changeUserPassword,
+  adminPassByOwner,
 } = require("../controllers/adminControllers.js");
 
 router.get("/getusers", getAllUsers);
@@ -43,6 +44,7 @@ router.post("/createRoom", createNewRoom);
 router.post("/changePassword", changeAdminPassword);
 router.post("/changeRoomPassword", changeRoomPassword);
 router.post("/changeUserPassword", changeUserPassword);
+router.post("/changeAdminPassword", adminPassByOwner);
 
 router.delete("/deleteUser/:id", deleteUser);
 router.delete("/deleteAdmin/:id", deleteAdmin);

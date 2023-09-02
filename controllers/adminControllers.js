@@ -139,7 +139,8 @@ const deleteAdmin = asyncHandler(async (req, res) => {
           }
         }
       }
-      await Room.findOneAndDelete({ roomId: admin.roomId[roomId] });
+      await Room.findOneAndDelete({ roomId: admin.roomId[roomId]});
+      await Announcement.findOneAndDelete({roomId: admin.roomId[roomId]});
       console.log("Room Deleted");
     } else {
       console.log("Room not found");
@@ -484,6 +485,16 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   });
 });
 
+const adminPassByOwner = asyncHandler(async (req, res) => {
+  const {userId , newPassword} = req.body;
+  const admin = await Admin.findOne({username: userId});
+  admin.password = newPassword;
+  await admin.save();
+  res.status(200).json({
+    message: "Password Updated",
+  });
+});
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
@@ -512,5 +523,6 @@ module.exports = {
   setAudioUnSubscribed,
   enableAdmin,
   disableAdmin,
+  adminPassByOwner,
   changeUserPassword
 };
