@@ -120,7 +120,6 @@ const deleteAdmin = asyncHandler(async (req, res) => {
   for (const roomId in admin.roomId) {
     console.log(admin.roomId[roomId]);
     const room = await Room.findOne({ roomId: admin.roomId[roomId] });
-    // console.log(room.roomId);
     if (room) {
       console.log(room.roomId);
       for (const user in room.users) {
