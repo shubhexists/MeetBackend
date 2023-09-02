@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
-const Room = require("../models/roomModel.js");
+const Room = require("../models/roomModels.js");
 const Announcement = require("../models/announcementModel.js");
 
 //@desc Change Status of a user to True
