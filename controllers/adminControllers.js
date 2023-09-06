@@ -385,6 +385,12 @@ const setIsMuted = asyncHandler(async (req, res) => {
   });
 });
 
+const getUser = asyncHandler(async (req,res) => {
+  const { id } = req.params;
+  const user = await User.findOne({username: id})
+  res.status(200).json({user})
+});
+
 const setIsUnmuted = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const user = await User.findOneAndUpdate(
@@ -508,6 +514,7 @@ module.exports = {
   disableRoom,
   addRoom,
   getAdmin,
+  getUser,
   getRoom,
   newAnnouncement,
   changeAdminPassword,

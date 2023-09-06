@@ -30,9 +30,11 @@ const {
   getSocketData,
   changeUserPassword,
   adminPassByOwner,
+  getUser,
 } = require("../controllers/adminControllers.js");
 
 router.get("/getusers", getAllUsers);
+router.get("/getuser/:id", getUser);
 router.get("/getadmins", getAllAdmins);
 router.get("/getrooms", getAllRooms);
 router.get("/getAdmin/:id", getAdmin);
