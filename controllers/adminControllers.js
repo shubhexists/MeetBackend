@@ -184,6 +184,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
       res.status(200).json({
         accessToken,
         username: admin.username,
+        name: admin.name,
         roomId: admin.roomId,
         role: admin.role,
       });
