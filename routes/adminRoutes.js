@@ -31,6 +31,8 @@ const {
   changeUserPassword,
   adminPassByOwner,
   getUser,
+  changeUserName,
+  changeAdminName,
 } = require("../controllers/adminControllers.js");
 
 router.get("/getusers", getAllUsers);
@@ -65,6 +67,8 @@ router.put("/setUserUnmuted/:userId", setIsUnmuted);
 router.put("/subscribeUserAudio/:userId", setAudioSubscribed);
 router.put("/unsubscribeUserAudio/:userId", setAudioUnSubscribed);
 router.put("/enableAdmin/:id", enableAdmin);
+router.put('/changeUserName/:id', changeUserName);
+router.put('/changeAdminName/:id', changeAdminName);
 router.put("/disableAdmin/:id", disableAdmin);
 
 module.exports = router;

@@ -500,11 +500,39 @@ const adminPassByOwner = asyncHandler(async (req, res) => {
   });
 });
 
+const changeUserName = asyncHandler(
+  async (req,res) => {
+    const {id} = req.params;
+    const {newName} = req.body;
+    const user = await User.findOne({username: id});
+    user.name = newName;
+    await user.save();
+    res.status(200).json({
+      message: "Name Updated",
+    });
+  }
+)
+
+const changeAdminName = asyncHandler(
+  async (req,res) => {
+    const {id} = req.params;
+    const {newName} = req.body;
+    const admin = await Admin.findOne({username: id});
+    admin.name = newName;
+    await admin.save();
+    res.status(200).json({
+      message: "Name Updated",
+    });
+  }
+)
+
 module.exports = {
   getAllUsers,
   getAllAdmins,
   createNewRoom,
   getAllRooms,
+  changeUserName,
+  changeAdminName,
   deleteUser,
   deleteAdmin,
   getSocketData,
