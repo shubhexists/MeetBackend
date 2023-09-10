@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
 const Room = require("../models/roomModels.js");
+const Admin = require("../models/adminModel.js");
 const Announcement = require("../models/announcementModel.js");
 
 //@desc Change Status of a user to True
@@ -26,7 +27,7 @@ const setDeviceInfo = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { deviceInfo } = req.body;
   const user = await User.findOne({ username: id });
-  if(user.deviceInfo === "" || user.deviceInfo === undefined) {
+  if (user.deviceInfo === "" || user.deviceInfo === undefined) {
     user.deviceInfo = deviceInfo;
   }
   await user.save();
@@ -39,7 +40,7 @@ const changeDevice = asyncHandler(async (req, res) => {
   user.deviceInfo = "";
   await user.save();
   res.json({ message: "Device Info Changed" });
-})
+});
 
 const getAnnouncement = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -78,35 +79,48 @@ const changeLogTime = asyncHandler(async (req, res) => {
   console.log(logTime);
   const user = await User.findOne({ username: id });
   user.lastLogTime = logTime;
-  await user.save();  
+  await user.save();
   res.json({ message: "Log Time Changed" });
 });
 
-const setIsSpeaking = asyncHandler(async (req,res) => {
+const setIsSpeaking = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const user = await User.findOne({username: id});
+  const user = await User.findOne({ username: id });
   user.isSpeaking = true;
   await user.save();
   res.json({
-    message: "User is now speaking"
+    message: "User is now speaking",
   });
 });
 
-const setIsMute = asyncHandler(async (req,res) => {
+const setIsMute = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const user = await User.findOne({username: id});
+  const user = await User.findOne({ username: id });
   user.isSpeaking = false;
   await user.save();
   res.json({
-    message: "User is now Muted"
+    message: "User is now Muted",
   });
 });
 
-const getRoomUsers = asyncHandler(async (req,res) => {
+const getRoomUsers = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const room = await Room.findOne({roomId: id});
+  const room = await Room.findOne({ roomId: id });
   const users = room.users;
-  res.json({"users": users});
+  res.json({ users: users });
+});
+
+const getAdminFromRoomId = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const room = await Room.findOne({ roomId: id });
+  const users = room.users;
+  for (var i = 0; i < users.length; i++) {
+    const admin = await Admin.findOne({ username: users[i] });
+    if(admin){
+      res.json({ admin: admin });
+      break;
+    }
+  }
 });
 
 module.exports = {
@@ -119,5 +133,6 @@ module.exports = {
   getAnnouncement,
   changeUserPassword,
   setIsSpeaking,
-  setIsMute
+  getAdminFromRoomId,
+  setIsMute,
 };

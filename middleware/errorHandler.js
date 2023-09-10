@@ -38,8 +38,8 @@ const errorHandler = (err, req, res, next) => {
       });
       break;
     default:
-        console.log("No Errors, All Good!");
-        break;
+      console.log("No Errors, All Good!");
+      break;
   }
 };
 module.exports = errorHandler;

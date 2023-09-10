@@ -138,8 +138,8 @@ const deleteAdmin = asyncHandler(async (req, res) => {
           }
         }
       }
-      await Room.findOneAndDelete({ roomId: admin.roomId[roomId]});
-      await Announcement.findOneAndDelete({roomId: admin.roomId[roomId]});
+      await Room.findOneAndDelete({ roomId: admin.roomId[roomId] });
+      await Announcement.findOneAndDelete({ roomId: admin.roomId[roomId] });
       console.log("Room Deleted");
     } else {
       console.log("Room not found");
@@ -386,10 +386,10 @@ const setIsMuted = asyncHandler(async (req, res) => {
   });
 });
 
-const getUser = asyncHandler(async (req,res) => {
+const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const user = await User.findOne({username: id})
-  res.status(200).json({user})
+  const user = await User.findOne({ username: id });
+  res.status(200).json({ user });
 });
 
 const setIsUnmuted = asyncHandler(async (req, res) => {
@@ -482,8 +482,8 @@ const getSocketData = asyncHandler(async (req, res) => {
 });
 
 const changeUserPassword = asyncHandler(async (req, res) => {
-  const {userId , newPassword} = req.body;
-  const user = await User.findOne({username: userId});
+  const { userId, newPassword } = req.body;
+  const user = await User.findOne({ username: userId });
   user.password = newPassword;
   await user.save();
   res.status(200).json({
@@ -492,8 +492,8 @@ const changeUserPassword = asyncHandler(async (req, res) => {
 });
 
 const adminPassByOwner = asyncHandler(async (req, res) => {
-  const {userId , newPassword} = req.body;
-  const admin = await Admin.findOne({username: userId});
+  const { userId, newPassword } = req.body;
+  const admin = await Admin.findOne({ username: userId });
   admin.password = newPassword;
   await admin.save();
   res.status(200).json({
@@ -501,31 +501,27 @@ const adminPassByOwner = asyncHandler(async (req, res) => {
   });
 });
 
-const changeUserName = asyncHandler(
-  async (req,res) => {
-    const {id} = req.params;
-    const {newName} = req.body;
-    const user = await User.findOne({username: id});
-    user.name = newName;
-    await user.save();
-    res.status(200).json({
-      message: "Name Updated",
-    });
-  }
-)
+const changeUserName = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { newName } = req.body;
+  const user = await User.findOne({ username: id });
+  user.name = newName;
+  await user.save();
+  res.status(200).json({
+    message: "Name Updated",
+  });
+});
 
-const changeAdminName = asyncHandler(
-  async (req,res) => {
-    const {id} = req.params;
-    const {newName} = req.body;
-    const admin = await Admin.findOne({username: id});
-    admin.name = newName;
-    await admin.save();
-    res.status(200).json({
-      message: "Name Updated",
-    });
-  }
-)
+const changeAdminName = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { newName } = req.body;
+  const admin = await Admin.findOne({ username: id });
+  admin.name = newName;
+  await admin.save();
+  res.status(200).json({
+    message: "Name Updated",
+  });
+});
 
 module.exports = {
   getAllUsers,
@@ -559,5 +555,5 @@ module.exports = {
   enableAdmin,
   disableAdmin,
   adminPassByOwner,
-  changeUserPassword
+  changeUserPassword,
 };
