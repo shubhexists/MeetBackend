@@ -78,9 +78,9 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username });
   if (user.role === "Host") {
     if (
-      user.deviceInfo == device ||
-      user.deviceInfo == null ||
-      user.deviceInfo == ""
+      user.deviceInfo === device ||
+      user.deviceInfo === null ||
+      user.deviceInfo === ""
     ) {
       if (user && password === user.password) {
         const room = await Room.findOne({ roomId: user.roomId });
@@ -117,9 +117,9 @@ const loginUser = asyncHandler(async (req, res) => {
     }
   } else {
     if (
-      user.deviceInfo == device ||
-      user.deviceInfo == null ||
-      user.deviceInfo == ""
+      user.deviceInfo === device ||
+      user.deviceInfo === null ||
+      user.deviceInfo === ""
     ) {
       if (user && password === user.password) {
         const room = await Room.findOne({ roomId: user.roomId });
