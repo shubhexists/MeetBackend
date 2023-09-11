@@ -70,84 +70,100 @@ const registerUser = asyncHandler(async (req, res) => {
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
   console.log("Logging in User");
-  const { username, password } = req.body;
-  if (!username || !password) {
+  const { username, password, device } = req.body;
+  if (!username || !password || !device) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
   const user = await User.findOne({ username });
   if (user.role === "Host") {
-    if (user && password === user.password) {
-      const room = await Room.findOne({ roomId: user.roomId });
-      if (room.isDisabled) {
-        res.status(401).json({
-          message: "Room is disabled. Contact your admin for more details.",
-        });
-      } else {
-        room.isHostIn = true;
-        await room.save();
-        const accessToken = jwt.sign(
-          {
-            user: {
-              _id: user._id,
-              username: user.username,
-              name: user.name,
-              roomId: user.roomId,
-              role: user.role,
-            },
-          },
-          process.env.ACCESS_TOKEN_SECRET
-        );
-        res.status(200).json({
-          accessToken,
-          username: user.username,
-          roomId: user.roomId,
-          role: user.role,
-        });
-      }
-    } else {
-      res.status(401);
-      throw new Error("Invalid username or password");
-    }
-  } else {
-    if (user && password === user.password) {
-      const room = await Room.findOne({ roomId: user.roomId });
-      if (room.isDisabled) {
-        res.status(401).json({
-          message: "Room is disabled. Contact your admin for more details.",
-        });
-      } else {
-        if (room.isHostIn) {
-          if (user.isDisabled !== true) {
-            const accessToken = jwt.sign(
-              {
-                user: {
-                  _id: user._id,
-                  username: user.username,
-                  name: user.name,
-                  roomId: user.roomId,
-                  role: user.role,
-                },
-              },
-              process.env.ACCESS_TOKEN_SECRET
-            );
-            res.status(200).json({
-              accessToken,
-              username: user.username,
-              roomId: user.roomId,
-              role: user.role,
-            });
-          } else {
-            res.status(401).json({
-              message: "User is disabled. Contact your admin for more details.",
-            });
-          }
-        } else {
+    if (
+      user.deviceInfo == device ||
+      user.deviceInfo == null ||
+      user.deviceInfo == ""
+    ) {
+      if (user && password === user.password) {
+        const room = await Room.findOne({ roomId: user.roomId });
+        if (room.isDisabled) {
           res.status(401).json({
-            message:
-              "Host is not in the room. Contact your admin for more details.",
+            message: "Room is disabled. Contact your admin for more details.",
+          });
+        } else {
+          room.isHostIn = true;
+          await room.save();
+          const accessToken = jwt.sign(
+            {
+              user: {
+                _id: user._id,
+                username: user.username,
+                name: user.name,
+                roomId: user.roomId,
+                role: user.role,
+              },
+            },
+            process.env.ACCESS_TOKEN_SECRET
+          );
+          res.status(200).json({
+            accessToken,
+            username: user.username,
+            roomId: user.roomId,
+            role: user.role,
           });
         }
+      } else {
+        res.status(401);
+        throw new Error("Invalid username or password");
+      }
+    }
+  } else {
+    if (
+      user.deviceInfo == device ||
+      user.deviceInfo == null ||
+      user.deviceInfo == ""
+    ) {
+      if (user && password === user.password) {
+        const room = await Room.findOne({ roomId: user.roomId });
+        if (room.isDisabled) {
+          res.status(401).json({
+            message: "Room is disabled. Contact your admin for more details.",
+          });
+        } else {
+          if (room.isHostIn) {
+            if (user.isDisabled !== true) {
+              const accessToken = jwt.sign(
+                {
+                  user: {
+                    _id: user._id,
+                    username: user.username,
+                    name: user.name,
+                    roomId: user.roomId,
+                    role: user.role,
+                  },
+                },
+                process.env.ACCESS_TOKEN_SECRET
+              );
+              res.status(200).json({
+                accessToken,
+                username: user.username,
+                roomId: user.roomId,
+                role: user.role,
+              });
+            } else {
+              res.status(401).json({
+                message:
+                  "User is disabled. Contact your admin for more details.",
+              });
+            }
+          } else {
+            res.status(401).json({
+              message:
+                "Host is not in the room. Contact your admin for more details.",
+            });
+          }
+        }
+      } else {
+        res.status(401);
+        throw new Error("Invalid username or password");
       }
     }
   }
