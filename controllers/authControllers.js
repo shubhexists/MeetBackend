@@ -114,6 +114,11 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error("Invalid username or password");
       }
+    } else {
+      res.status(401).json({
+        message:
+          "Invalid device. Contact your admin for more details.",
+      });
     }
   } else {
     if (
@@ -165,6 +170,11 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error("Invalid username or password");
       }
+    } else {
+      res.status(401).json({
+        message:
+          "Invalid device. Contact your admin for more details.",
+      });
     }
   }
 });
