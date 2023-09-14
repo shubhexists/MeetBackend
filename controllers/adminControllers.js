@@ -531,6 +531,7 @@ const searchUsersByUserName = asyncHandler(
     const regex = new RegExp(searchString, 'i');
     const users = await User.find({
       name: { $regex: regex},
+      role: "User",
     });
     res.json(users);
   }
