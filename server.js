@@ -8,6 +8,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
+app.get("/api/url", (req, res) => res.json({ url: "wss://livekit.zoomtod.com" }));
 app.use('/api/auth', require("./routes/authRoutes"));
 app.use('/api/livekit', require("./routes/livekitRoutes"));
 app.use('/api/admin', require("./routes/adminRoutes"));
