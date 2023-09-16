@@ -28,6 +28,6 @@ router.put("/setDeviceInfo/:id", setDeviceInfo);
 router.put("/changeDevice/:id", changeDevice);
 router.put("/setIsSpeaking/:id", setIsSpeaking);
 router.put("/setIsMute/:id", setIsMute);
-router.put('/setNotSpeaking/:id', setUserNotSpeaking);
+// router.put('/setNotSpeaking/:id', setUserNotSpeaking);
 
 module.exports = router;
