@@ -123,15 +123,25 @@ const getAdminFromRoomId = asyncHandler(async (req, res) => {
   }
 });
 
-// const setUserNotSpeaking = asyncHandler(async (req, res) => {
-//   const { id } = req.params;
-//   const user = await User.findOne({ username: id });
-//   user.isSpeaking = false;
-//   await user.save();
-//   res.json({
-//     message: "User is now not speaking",
-//   });
-// });
+const setUserOnMuteInDb = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findOne({ username: id });
+  user.isMuted = true;
+  await user.save();
+  res.json({
+    message: "User is now muted",
+  });
+});
+
+const setUserNotMuteInDb = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findOne({ username: id });
+  user.isMuted = false;
+  await user.save();
+  res.json({
+    message: "User is now unmuted",
+  });
+});
 
 module.exports = {
   changeStatusTrue,
@@ -145,5 +155,6 @@ module.exports = {
   setIsSpeaking,
   getAdminFromRoomId,
   setIsMute,
-  // setUserNotSpeaking,
+  setUserOnMuteInDb,
+  setUserNotMuteInDb,
 };
