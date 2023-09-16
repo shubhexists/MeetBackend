@@ -86,7 +86,7 @@ const changeLogTime = asyncHandler(async (req, res) => {
 const setIsSpeaking = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({ username: id });
-  user.isMuted = true;
+  user.isMuted = false;
   await user.save();
   res.json({
     message: "User is now speaking",
@@ -96,7 +96,7 @@ const setIsSpeaking = asyncHandler(async (req, res) => {
 const setIsMute = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({ username: id });
-  user.isMuted = false;
+  user.isMuted = true;
   await user.save();
   res.json({
     message: "User is now Muted",
@@ -123,6 +123,16 @@ const getAdminFromRoomId = asyncHandler(async (req, res) => {
   }
 });
 
+const setUserNotSpeaking = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findOne({ username: id });
+  user.isSpeaking = false;
+  await user.save();
+  res.json({
+    message: "User is now not speaking",
+  });
+});
+
 module.exports = {
   changeStatusTrue,
   changeStatusFalse,
@@ -135,4 +145,5 @@ module.exports = {
   setIsSpeaking,
   getAdminFromRoomId,
   setIsMute,
+  setUserNotSpeaking,
 };
