@@ -86,7 +86,7 @@ const changeLogTime = asyncHandler(async (req, res) => {
 const setIsSpeaking = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({ username: id });
-  user.isSpeaking = true;
+  user.isMuted = true;
   await user.save();
   res.json({
     message: "User is now speaking",
@@ -96,7 +96,7 @@ const setIsSpeaking = asyncHandler(async (req, res) => {
 const setIsMute = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({ username: id });
-  user.isSpeaking = false;
+  user.isMuted = false;
   await user.save();
   res.json({
     message: "User is now Muted",
