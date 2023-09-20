@@ -18,8 +18,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const usernameExists = await User.findOne({ username });
   if (usernameExists) {
-    res.status(400);
-    throw new Error("Username already exists");
+    res.status(400).json({
+      message: "Username already exists",
+    });
   }
   // const hashedPassword = await bcrypt.hash(password, 10);
   const roomExists = await Room.findOne({
