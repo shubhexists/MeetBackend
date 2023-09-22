@@ -123,7 +123,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
     if (room) {
       console.log(room.roomId);
       for (const user in room.users) {
-        console.log("Host "+room.users[user]);
+        console.log("Host " + room.users[user]);
         await User.findOneAndDelete({ username: room.users[user] });
         console.log("Deleted ");
       }
@@ -512,19 +512,27 @@ const changeAdminName = asyncHandler(async (req, res) => {
   });
 });
 
-const searchUsersByUserName = asyncHandler(
-  async (req,res) => {
-    const { id } = req.params;
-    console.log(id);
-    const searchString = '^'+id
-    const regex = new RegExp(searchString, 'i');
-    const users = await User.find({
-      name: { $regex: regex},
-      role: "User",
-    });
-    res.json(users);
-  }
-);
+const searchUsersByUserName = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const searchString = "^" + id;
+  const regex = new RegExp(searchString, "i");
+  const users = await User.find({
+    name: { $regex: regex },
+    role: "User",
+  });
+  res.json(users);
+});
+
+const getIdFromName = asyncHandler(async (req, res) => {
+  const { name } = req.params;
+  console.log(name);
+  const user = await User.findOne({
+    name: name,
+  });
+  console.log(user);
+  res.json(user);
+});
 
 module.exports = {
   searchUsersByUserName,
@@ -560,4 +568,5 @@ module.exports = {
   disableAdmin,
   adminPassByOwner,
   changeUserPassword,
+  getIdFromName,
 };
