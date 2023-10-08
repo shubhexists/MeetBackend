@@ -426,13 +426,13 @@ const setAudioUnSubscribed = asyncHandler(async (req, res) => {
 
 const changeRoomPassword = asyncHandler(async (req, res) => {
   const { roomId, newPassword } = req.body;
-  const room = await Room.findOne({ roomId });
+  const room = await Room.findOne({ roomId: roomId });
   room.password = newPassword;
   await room.save();
   console.log("Room Password Updated");
   const host = await User.findOne({ username: roomId });
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  host.password = hashedPassword;
+  // const hashedPassword = await bcrypt.hash(newPassword, 10);
+  host.password = newPassword;
   await host.save();
   console.log("Host Password Updated");
   res.status(200).json({
