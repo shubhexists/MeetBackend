@@ -16,7 +16,7 @@ const generateMeetingToken = asyncHandler(async (req, res) => {
     process.env.LIVEKIT_API_SECRET,
     {
       identity: identity,
-    }
+    },
   );
 
   token.addGrant({
@@ -42,7 +42,7 @@ const generateAdminToken = asyncHandler(async (req, res) => {
     process.env.LIVEKIT_API_SECRET,
     {
       identity: identity,
-    }
+    },
   );
 
   token.addGrant({
@@ -67,7 +67,7 @@ const generateRecordingToken = asyncHandler(async (req, res) => {
     process.env.LIVEKIT_API_SECRET,
     {
       identity: identity,
-    }
+    },
   );
   token.addGrant({
     roomJoin: true,

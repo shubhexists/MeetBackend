@@ -29,7 +29,7 @@ router.put("/setDeviceInfo/:id", setDeviceInfo);
 router.put("/changeDevice/:id", changeDevice);
 router.put("/setIsSpeaking/:id", setIsSpeaking);
 router.put("/setIsMute/:id", setIsMute);
-router.put('/setUserMuteOnDb/:id', setUserOnMuteInDb);
-router.put('/setUserMuteOffDb/:id', setUserNotMuteInDb);
+router.put("/setUserMuteOnDb/:id", setUserOnMuteInDb);
+router.put("/setUserMuteOffDb/:id", setUserNotMuteInDb);
 
 module.exports = router;

@@ -62,7 +62,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
       { username: userId },
       {
         password: newpassword,
-      }
+      },
     );
     res.json({ message: "Password Changed" });
   } else {
@@ -116,7 +116,7 @@ const getAdminFromRoomId = asyncHandler(async (req, res) => {
   const users = room.users;
   for (var i = 0; i < users.length; i++) {
     const admin = await Admin.findOne({ username: users[i] });
-    if(admin){
+    if (admin) {
       res.json({ admin: admin });
       break;
     }

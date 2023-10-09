@@ -44,8 +44,8 @@ router.get("/getrooms", getAllRooms);
 router.get("/getAdmin/:id", getAdmin);
 router.get("/getRoom/:id", getRoom);
 router.get("/getSocketData/:id", getSocketData);
-router.get('/searchUser/:id', searchUsersByUserName);
-router.get('/getIdFromName/:name', getIdFromName);
+router.get("/searchUser/:id", searchUsersByUserName);
+router.get("/getIdFromName/:name", getIdFromName);
 
 router.post("/auth/login", loginAdmin);
 router.post("/createRoom", createNewRoom);

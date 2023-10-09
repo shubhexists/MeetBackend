@@ -72,7 +72,7 @@ const createNewRoom = asyncHandler(async (req, res) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   const an = await Announcement.create({
@@ -103,7 +103,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username: id });
   const room = await Room.findOneAndUpdate(
     { roomId: user.roomId },
-    { $pull: { users: id } }
+    { $pull: { users: id } },
   );
   await User.findOneAndDelete({ username: id });
   res.json({
@@ -168,7 +168,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
             role: admin.role,
           },
         },
-        process.env.ACCESS_TOKEN_SECRET
+        process.env.ACCESS_TOKEN_SECRET,
       );
       res.status(200).json({
         accessToken,
@@ -293,7 +293,7 @@ const changeAdminPassword = asyncHandler(async (req, res) => {
     // const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
     await Admin.findOneAndUpdate(
       { username: userId },
-      { password: newPassword }
+      { password: newPassword },
     );
     console.log("Password Updated");
     res.status(200).json({
@@ -311,7 +311,7 @@ const setHostInRoom = asyncHandler(async (req, res) => {
     { roomId },
     {
       isHostIn: true,
-    }
+    },
   );
   res.status(200).json({
     message: "Host In The Room",
@@ -325,7 +325,7 @@ const setHostOutRoom = asyncHandler(async (req, res) => {
     { roomId },
     {
       isHostIn: false,
-    }
+    },
   );
   console.log("Host Out The Room");
   res.status(200).json({
@@ -341,7 +341,7 @@ const setUserDisabled = asyncHandler(async (req, res) => {
     { username: userId },
     {
       isDisabled: true,
-    }
+    },
   );
   res.status(200).json({
     message: "User Disabled",
@@ -355,7 +355,7 @@ const setUserEnabled = asyncHandler(async (req, res) => {
     { username: userId },
     {
       isDisabled: false,
-    }
+    },
   );
   res.status(200).json({
     message: "User Enabled",
@@ -368,7 +368,7 @@ const setIsMuted = asyncHandler(async (req, res) => {
     { username: userId },
     {
       isMuted: true,
-    }
+    },
   );
   res.status(200).json({
     message: "User is Muted",
@@ -387,7 +387,7 @@ const setIsUnmuted = asyncHandler(async (req, res) => {
     { username: userId },
     {
       isMuted: false,
-    }
+    },
   );
   res.status(200).json({
     message: "User is Unmuted",
@@ -402,7 +402,7 @@ const setAudioSubscribed = asyncHandler(async (req, res) => {
     },
     {
       isAudioSubscribed: true,
-    }
+    },
   );
   res.status(200).json({
     message: "Audio Subscribed",
@@ -417,7 +417,7 @@ const setAudioUnSubscribed = asyncHandler(async (req, res) => {
     },
     {
       isAudioSubscribed: false,
-    }
+    },
   );
   res.status(200).json({
     message: "Audio Unsubscribed",

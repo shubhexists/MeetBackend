@@ -15,7 +15,7 @@ const setDeviceInfo = asyncHandler(async (req, res, next) => {
     } else {
       res.status(400);
       throw new Error(
-        "Only One Device is allowed to login at a time. Kindly Contact Admin."
+        "Only One Device is allowed to login at a time. Kindly Contact Admin.",
       );
     }
   } else {

@@ -5,7 +5,7 @@ const connectDb = async () => {
     console.log(
       "Db Connected: ",
       connect.connection.host,
-      connect.connection.name
+      connect.connection.name,
     );
   } catch (err) {
     console.log(err);

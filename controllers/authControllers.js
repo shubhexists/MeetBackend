@@ -48,7 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
     },
     {
       new: true,
-    }
+    },
   );
 
   if (user) {
@@ -102,7 +102,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 role: user.role,
               },
             },
-            process.env.ACCESS_TOKEN_SECRET
+            process.env.ACCESS_TOKEN_SECRET,
           );
           res.status(200).json({
             accessToken,
@@ -117,8 +117,7 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     } else {
       res.status(401).json({
-        message:
-          "Invalid device. Contact your admin for more details.",
+        message: "Invalid device. Contact your admin for more details.",
       });
     }
   } else {
@@ -146,7 +145,7 @@ const loginUser = asyncHandler(async (req, res) => {
                     role: user.role,
                   },
                 },
-                process.env.ACCESS_TOKEN_SECRET
+                process.env.ACCESS_TOKEN_SECRET,
               );
               res.status(200).json({
                 accessToken,
@@ -173,8 +172,7 @@ const loginUser = asyncHandler(async (req, res) => {
       }
     } else {
       res.status(401).json({
-        message:
-          "Invalid device. Contact your admin for more details.",
+        message: "Invalid device. Contact your admin for more details.",
       });
     }
   }
