@@ -35,6 +35,7 @@ const {
   changeAdminName,
   searchUsersByUserName,
   getIdFromName,
+  searchUsersByUserId,
 } = require("../controllers/adminControllers.js");
 
 router.get("/getusers", getAllUsers);
@@ -45,6 +46,7 @@ router.get("/getAdmin/:id", getAdmin);
 router.get("/getRoom/:id", getRoom);
 router.get("/getSocketData/:id", getSocketData);
 router.get("/searchUser/:id", searchUsersByUserName);
+router.get('/searchById/:id', searchUsersByUserId);
 router.get("/getIdFromName/:name", getIdFromName);
 
 router.post("/auth/login", loginAdmin);

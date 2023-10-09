@@ -524,6 +524,18 @@ const searchUsersByUserName = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
+const searchUsersByUserId = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const searchString = "^" + id;
+  const regex = new RegExp(searchString, "i");
+  const users = await User.find({
+    username: { $regex: regex },
+    role: "User",
+  });
+  res.json(users);
+});
+
 const getIdFromName = asyncHandler(async (req, res) => {
   const { name } = req.params;
   console.log(name);
@@ -538,6 +550,7 @@ module.exports = {
   searchUsersByUserName,
   getAllUsers,
   getAllAdmins,
+  searchUsersByUserId,
   createNewRoom,
   getAllRooms,
   changeUserName,
