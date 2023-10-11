@@ -64,6 +64,7 @@ const createNewRoom = asyncHandler(async (req, res) => {
     name: roomId,
     roomId,
     role: "Host",
+    deviceInfo: ""
   });
   const hmm = await Room.findOneAndUpdate(
     { roomId: roomId },
