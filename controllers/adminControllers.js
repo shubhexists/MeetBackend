@@ -57,7 +57,6 @@ const createNewRoom = asyncHandler(async (req, res) => {
     users: [],
     description,
   });
-  // const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     username: roomId,
     password: password,
@@ -444,6 +443,12 @@ const changeRoomPassword = asyncHandler(async (req, res) => {
 const disableAdmin = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const admin = await Admin.findOne({ username: id });
+  var rooms = admin.roomId;
+  for (const roomId in rooms) {
+    const room = await Room.findOne({ roomId: rooms[roomId] });
+    room.isDisabled = true;
+    await room.save();
+  }
   admin.isDisabled = true;
   await admin.save();
   res.status(200).json({
