@@ -459,6 +459,12 @@ const disableAdmin = asyncHandler(async (req, res) => {
 const enableAdmin = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const admin = await Admin.findOne({ username: id });
+  var rooms = admin.roomId;
+  for (const roomId in rooms) {
+    const room = await Room.findOne({ roomId: rooms[roomId] });
+    room.isDisabled = false;
+    await room.save();
+  }
   admin.isDisabled = false;
   await admin.save();
   res.status(200).json({
