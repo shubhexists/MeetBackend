@@ -4,8 +4,20 @@ const responseTime = require('response-time');
 const client = require('prom-client');
 const errorHandler = require("./middleware/errorHandler");
 const dotenv = require("dotenv").config();
+const {createLogger, transports} = require('winston');
+const LokiTransport = require('winston-loki');
 const cors = require("cors");
 connectDb();
+
+const options = {
+  transports: [
+    new LokiTransport({
+      host: "http://localhost:3100",
+    }),
+  ],
+};
+
+
 
 const app = express();
 const port = process.env.PORT || 5000;

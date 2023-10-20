@@ -12,7 +12,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({
     role: "User",
   });
-  // console.log(users);
   res.json(users);
 });
 
