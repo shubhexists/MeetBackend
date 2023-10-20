@@ -3,7 +3,6 @@ const User = require("../models/userModel");
 const Room = require("../models/roomModels");
 const Admin = require("../models/adminModel");
 const Announcement = require("../models/announcementModel");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 //@desc get all users

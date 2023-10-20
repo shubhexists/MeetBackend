@@ -13,7 +13,6 @@ const validateToken = asyncHandler(async (req, res, next) => {
       }
       req.user = decoded.user;
       next();
-      console.log(decoded); //REMEMBER TO REMOVE THIS
     });
     if (!token) {
       res.status(401);
@@ -23,6 +22,3 @@ const validateToken = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = validateToken;
-
-//DEVICE CONTROLLERS
-//req.headers['user-agent']
