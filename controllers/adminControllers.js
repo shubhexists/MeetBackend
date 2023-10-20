@@ -222,7 +222,7 @@ const enableRoom = asyncHandler(async (req, res) => {
   const room = await Room.findOne({ roomId: id });
   room.isDisabled = false;
   await room.save();
-  logger.info(`Room ${roomId} enabled !`);
+  logger.info(`Room ${id} enabled !`);
   res.status(200).json({
     message: "Room Successfully Enabled",
   });
