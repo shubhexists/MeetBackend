@@ -1,10 +1,17 @@
 const asyncHandler = require("express-async-handler");
 const { AccessToken } = require("livekit-server-sdk");
 const dotenv = require("dotenv").config();
+const LokiTransport = require("winston-loki");
+const { createLogger } = require("winston");
 
-//@desc Generate User Meeting Token
-//@route POST /api/livekit/usertoken
-//@access public
+const logger = createLogger({
+  transports: [
+    new LokiTransport({
+      host: "http://localhost:3100",
+    }),
+  ],
+});
+
 const generateMeetingToken = asyncHandler(async (req, res) => {
   const { identity, room } = req.body;
   if (!identity || !room) {
@@ -23,14 +30,10 @@ const generateMeetingToken = asyncHandler(async (req, res) => {
     roomJoin: true,
     room: room,
   });
-  console.log(req.body);
-
+  logger.info(`Meeting token generated for ${identity}`)
   res.status(200).json({ token: token.toJwt() });
 });
 
-//@desc Generate Admin Token
-//@route POST /api/livekit/adminToken
-//@access public
 const generateAdminToken = asyncHandler(async (req, res) => {
   const { identity, room } = req.body;
   if (!identity || !room) {
@@ -51,8 +54,7 @@ const generateAdminToken = asyncHandler(async (req, res) => {
     roomAdmin: true,
     roomCreate: true,
   });
-  console.log(req.body);
-
+  logger.info(`Admin token generated for ${identity}`)
   res.status(200).json({ token: token.toJwt() });
 });
 
@@ -74,7 +76,7 @@ const generateRecordingToken = asyncHandler(async (req, res) => {
     room: room,
     roomRecord: true,
   });
-
+  logger.info(`Recording token generated for ${identity}`)
   res.status(200).json({ token: token.toJwt() });
 });
 

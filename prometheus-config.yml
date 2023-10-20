@@ -4,4 +4,4 @@ global:
 scrape_configs:
   - job_name: prometheus
     static_configs:
-      - targets: ["192.168.47.51:5001"]
+      - targets: ["192.168.253.51:5001"]

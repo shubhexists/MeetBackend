@@ -3,14 +3,20 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const Room = require("../models/roomModels");
 const Admin = require("../models/adminModel");
+const LokiTransport = require("winston-loki");
+const { createLogger } = require("winston");
 
-//@desc Register a user
-//@route POST /api/users/register
-//@access public
-//Only Owner can register a user
+const logger = createLogger({
+  transports: [
+    new LokiTransport({
+      host: "http://localhost:3100",
+    }),
+  ],
+});
+
 const registerUser = asyncHandler(async (req, res) => {
-  console.log("Registering User");
   const { name, username, password, roomId, role, referal } = req.body;
+  logger.info(`Request to create User - ${username}`);
   if (!name || !username || !password || !roomId || !role) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -21,7 +27,6 @@ const registerUser = asyncHandler(async (req, res) => {
       message: "Username already exists",
     });
   }
-  // const hashedPassword = await bcrypt.hash(password, 10);
   const roomExists = await Room.findOne({
     roomId,
   });
@@ -51,7 +56,7 @@ const registerUser = asyncHandler(async (req, res) => {
   );
 
   if (user) {
-    console.log("User created");
+    logger.info(`User ${username} created`);
     res.status(201).json({
       _id: user.id,
       username: user.username,
@@ -65,12 +70,10 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc Login the user
-//@route POST /api/users/login
-//@access public
+
 const loginUser = asyncHandler(async (req, res) => {
-  console.log("Logging in User");
   const { username, password, device } = req.body;
+  logger.info(`Request to login User - ${username}`);
   if (!username || !password || !device) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -146,6 +149,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 },
                 process.env.ACCESS_TOKEN_SECRET,
               );
+              logger.info(`User ${username} logged in`);
               res.status(200).json({
                 accessToken,
                 username: user.username,
@@ -177,11 +181,6 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc Create a new Owner
-//@route POST /api/auth/createOwner
-//@access public
-
-//This Route has to be called manually and isn't placed on the GUI
 const createOwner = asyncHandler(async (req, res) => {
   const { name, username, password } = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE
@@ -194,7 +193,6 @@ const createOwner = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Username already exists");
   }
-  // const hashedPassword = await bcrypt.hash(password, 10);
   const user = await Admin.create({
     name,
     username,
@@ -203,7 +201,7 @@ const createOwner = asyncHandler(async (req, res) => {
     role: "Owner",
   });
   if (user) {
-    console.log("Owner created");
+    logger.info(`Owner ${username} created`);
     res.status(201).json({
       _id: user.id,
       username: user.username,
@@ -216,11 +214,7 @@ const createOwner = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc Create a new Admin
-//@route POST /api/auth/createAdmin
-//@access public
 const registerAdmin = asyncHandler(async (req, res) => {
-  console.log("Registering Admin");
   const { name, username, password, role, description } = req.body;
   //REMEMBER RoomId IS AN ARRAY HERE
   if (!name || !username || !password || !role) {
@@ -232,7 +226,6 @@ const registerAdmin = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Username already exists");
   }
-  // const hashedPassword = await bcrypt.hash(password, 10);
   const admin = await Admin.create({
     name,
     username,
@@ -241,9 +234,8 @@ const registerAdmin = asyncHandler(async (req, res) => {
     referal: description,
     role,
   });
-  console.log("Admin created");
   if (admin) {
-    console.log("Admin created");
+    logger.info(`Admin ${username} created`);
     res.status(201).json({
       _id: admin.id,
       password: admin.password,

@@ -4,10 +4,17 @@ const Room = require("../models/roomModels");
 const Admin = require("../models/adminModel");
 const Announcement = require("../models/announcementModel");
 const jwt = require("jsonwebtoken");
+const LokiTransport = require("winston-loki");
+const { createLogger } = require("winston");
 
-//@desc get all users
-//@route GET /api/admin/getusers
-//@access public
+const logger = createLogger({
+  transports: [
+    new LokiTransport({
+      host: "http://localhost:3100",
+    }),
+  ],
+});
+
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({
     role: "User",
@@ -15,9 +22,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
-//@desc get all admins
-//@route GET /api/admin/getadmins
-//@access public
 const getAllAdmins = asyncHandler(async (req, res) => {
   const admins = await Admin.find({
     role: "Admin",
@@ -25,19 +29,14 @@ const getAllAdmins = asyncHandler(async (req, res) => {
   res.json(admins);
 });
 
-//@desc get all admins
-//@route GET /api/admin/getadmins
-//@access public
 const getAllRooms = asyncHandler(async (req, res) => {
   const rooms = await Room.find({});
   res.json(rooms);
 });
 
-//@desc create a new room
-//@route GET /api/admin/createRoom
-//@access public
 const createNewRoom = asyncHandler(async (req, res) => {
   const { roomId, password, description } = req.body;
+  logger.info(`Request to create room ${roomId}`);
   if (!roomId) {
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -61,7 +60,7 @@ const createNewRoom = asyncHandler(async (req, res) => {
     name: roomId,
     roomId,
     role: "Host",
-    deviceInfo: ""
+    deviceInfo: "",
   });
   const hmm = await Room.findOneAndUpdate(
     { roomId: roomId },
@@ -70,7 +69,7 @@ const createNewRoom = asyncHandler(async (req, res) => {
     },
     {
       new: true,
-    },
+    }
   );
 
   const an = await Announcement.create({
@@ -79,7 +78,7 @@ const createNewRoom = asyncHandler(async (req, res) => {
   });
 
   if (room) {
-    console.log("Room created");
+    logger.info(`Room Created ${roomId}`);
     res.status(201).json({
       _id: room.id,
       roomId,
@@ -92,18 +91,15 @@ const createNewRoom = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc Delete a User
-//@route DELETE /api/admin/deleteUser/:id
-//@access public
 const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  //first delete the User in corresponding Room
   const user = await User.findOne({ username: id });
   const room = await Room.findOneAndUpdate(
     { roomId: user.roomId },
-    { $pull: { users: id } },
+    { $pull: { users: id } }
   );
   await User.findOneAndDelete({ username: id });
+  logger.info(`User Deleted ${id}`);
   res.json({
     message: "User Successfully Deleted",
   });
@@ -111,46 +107,34 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 const deleteAdmin = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+  logger.info(`Request to delete Admin - ${id}`);
   const admin = await Admin.findOne({ username: id });
-  console.log(admin.username);
-  console.log(admin.roomId);
   for (const roomId in admin.roomId) {
-    console.log(admin.roomId[roomId]);
     const room = await Room.findOne({ roomId: admin.roomId[roomId] });
     if (room) {
-      console.log(room.roomId);
       for (const user in room.users) {
-        console.log("Host " + room.users[user]);
         await User.findOneAndDelete({ username: room.users[user] });
-        console.log("Deleted ");
       }
       await Room.findOneAndDelete({ roomId: admin.roomId[roomId] });
       await Announcement.findOneAndDelete({ roomId: admin.roomId[roomId] });
-      console.log("Room Deleted");
     } else {
-      console.log("Room not found");
     }
   }
   await Admin.findOneAndDelete({ username: id });
-  console.log("Admin Deleted");
+  logger.info(`Admin ${id} deleted successfully`);
   res.json({
     message: "Admin Successfully Deleted",
   });
 });
 
-//@desc Login the user
-//@route POST /api/users/login
-//@access public
 const loginAdmin = asyncHandler(async (req, res) => {
-  console.log("Logging in User");
   const { username, password } = req.body;
+  logger.info(`Admin ${username} is requesting login`);
   if (!username || !password) {
     res.status(400);
     throw new Error("All fields are mandatory");
   }
   const admin = await Admin.findOne({ username });
-  console.log(admin);
   if (admin.isDisabled) {
     res.status(201);
     throw new Error("You are disabled, Kindly contact the Owner.");
@@ -166,7 +150,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
             role: admin.role,
           },
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.ACCESS_TOKEN_SECRET
       );
       res.status(200).json({
         accessToken,
@@ -184,16 +168,13 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
 const deleteRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  logger.info(`Request to delete Room ${id}`);
   const room = await Room.findOne({ roomId: id });
-  console.log("room found");
-  console.log(room.users);
   for (username in room.users) {
-    console.log(room.users[username]);
     await User.findOneAndDelete({ username: room.users[username] });
     const admin = await Admin.findOne({ username: room.users[username] });
     if (admin) {
       for (const roomId in admin.roomId) {
-        console.log(admin.roomId[roomId]);
         if (admin.roomId[roomId] === id) {
           var updated = admin.roomId.splice(roomId, 1);
         }
@@ -203,6 +184,7 @@ const deleteRoom = asyncHandler(async (req, res) => {
   }
   await Announcement.findOneAndDelete({ roomId: id });
   await Room.findOneAndDelete({ roomId: id });
+  logger.info(`Room ${id} deleted successfully`);
   res.status(200).json({
     message: "Room Successfully Deleted",
   });
@@ -211,16 +193,14 @@ const deleteRoom = asyncHandler(async (req, res) => {
 const addRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { roomId } = req.params;
-  console.log(roomId);
+  logger.info(`Request to add Room ${roomId} to Admin ${id}`);
   const admin = await Admin.findOne({ username: id });
   admin.roomId.push(roomId);
   await admin.save();
-  console.log("Room added to admin");
   const room = await Room.findOne({ roomId });
-  console.log(room.roomId);
   room.users.push(id);
   await room.save();
-  console.log("Admin added to room");
+  logger.info(`Room ${roomId} added to Admin ${id}`);
   res.status(200).json({
     message: "Room Successfully Added",
   });
@@ -228,10 +208,10 @@ const addRoom = asyncHandler(async (req, res) => {
 
 const disableRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  console.log(roomId);
   const room = await Room.findOne({ roomId });
   room.isDisabled = true;
   await room.save();
+  logger.info(`Room ${roomId} disabled !`);
   res.status(200).json({
     message: "Room Successfully Disabled",
   });
@@ -239,10 +219,10 @@ const disableRoom = asyncHandler(async (req, res) => {
 
 const enableRoom = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const room = await Room.findOne({ roomId: id });
   room.isDisabled = false;
   await room.save();
+  logger.info(`Room ${roomId} enabled !`);
   res.status(200).json({
     message: "Room Successfully Enabled",
   });
@@ -265,17 +245,15 @@ const getRoom = asyncHandler(async (req, res) => {
 const newAnnouncement = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
   const { announcement } = req.body;
-  console.log(announcement);
-  console.log(roomId);
   const room = await Announcement.findOne({ roomId });
   if (room) {
     room.message = announcement;
     await Announcement.findOneAndUpdate({ roomId }, { message: announcement });
+    logger.info(`Announcement Updated in ${roomId}`);
     res.status(200).json({
       message: "Announcement Updated",
     });
   } else {
-    console.log("Room not found");
     res.status(404);
     throw new Error("Room not found");
   }
@@ -283,22 +261,19 @@ const newAnnouncement = asyncHandler(async (req, res) => {
 
 const changeAdminPassword = asyncHandler(async (req, res) => {
   const { userId, password, newPassword } = req.body;
-  console.log(userId);
-  console.log(password);
-  console.log(newPassword);
   const admin = await Admin.findOne({ username: userId });
   if (admin && password === admin.password) {
-    // const newEncryptedpassword = await bcrypt.hash(newPassword, 10);
     await Admin.findOneAndUpdate(
       { username: userId },
-      { password: newPassword },
+      { password: newPassword }
     );
-    console.log("Password Updated");
+    logger.info(`Admin ${userId}'s password changed to ${newPassword}`);
     res.status(200).json({
       message: "Password Updated",
     });
   } else {
     res.status(401);
+    logger.info(`Admin ${userId}'s password change failed`);
     throw new Error("Invalid username or password");
   }
 });
@@ -309,8 +284,9 @@ const setHostInRoom = asyncHandler(async (req, res) => {
     { roomId },
     {
       isHostIn: true,
-    },
+    }
   );
+  logger.info(`Host ${roomId} in room`);
   res.status(200).json({
     message: "Host In The Room",
   });
@@ -318,29 +294,25 @@ const setHostInRoom = asyncHandler(async (req, res) => {
 
 const setHostOutRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
-  console.log(roomId);
   const host = await Room.findOneAndUpdate(
     { roomId },
     {
       isHostIn: false,
-    },
+    }
   );
-  console.log("Host Out The Room");
+  logger.info(`Host ${roomId} out of room`);
   res.status(200).json({
     message: "Host Out The Room",
   });
 });
 
 const setUserDisabled = asyncHandler(async (req, res) => {
-  console.log("User Disabled");
   const { userId } = req.params;
-  console.log(userId);
   const user = await User.findOneAndUpdate(
     { username: userId },
-    {
-      isDisabled: true,
-    },
+    { isDisabled: true }
   );
+  logger.info(`User ${userId} disabled`);
   res.status(200).json({
     message: "User Disabled",
   });
@@ -348,13 +320,11 @@ const setUserDisabled = asyncHandler(async (req, res) => {
 
 const setUserEnabled = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  console.log(userId);
   const user = await User.findOneAndUpdate(
     { username: userId },
-    {
-      isDisabled: false,
-    },
+    { isDisabled: false }
   );
+  logger.info(`User ${userId} enabled`);
   res.status(200).json({
     message: "User Enabled",
   });
@@ -364,10 +334,9 @@ const setIsMuted = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const user = await User.findOneAndUpdate(
     { username: userId },
-    {
-      isMuted: true,
-    },
+    { isMuted: true }
   );
+  logger.info(`User ${userId} muted`);
   res.status(200).json({
     message: "User is Muted",
   });
@@ -385,8 +354,9 @@ const setIsUnmuted = asyncHandler(async (req, res) => {
     { username: userId },
     {
       isMuted: false,
-    },
+    }
   );
+  logger.info(`User ${userId} unmuted`);
   res.status(200).json({
     message: "User is Unmuted",
   });
@@ -400,8 +370,9 @@ const setAudioSubscribed = asyncHandler(async (req, res) => {
     },
     {
       isAudioSubscribed: true,
-    },
+    }
   );
+  logger.info(`User ${userId} subscribed audio`);
   res.status(200).json({
     message: "Audio Subscribed",
   });
@@ -415,8 +386,9 @@ const setAudioUnSubscribed = asyncHandler(async (req, res) => {
     },
     {
       isAudioSubscribed: false,
-    },
+    }
   );
+  logger.info(`User ${userId} unsubscribed audio`);
   res.status(200).json({
     message: "Audio Unsubscribed",
   });
@@ -427,12 +399,10 @@ const changeRoomPassword = asyncHandler(async (req, res) => {
   const room = await Room.findOne({ roomId: roomId });
   room.password = newPassword;
   await room.save();
-  console.log("Room Password Updated");
   const host = await User.findOne({ username: roomId });
-  // const hashedPassword = await bcrypt.hash(newPassword, 10);
   host.password = newPassword;
   await host.save();
-  console.log("Host Password Updated");
+  logger.info(`Room ${roomId}'s password changed to ${newPassword}`);
   res.status(200).json({
     message: "Password Updated",
   });
@@ -449,6 +419,7 @@ const disableAdmin = asyncHandler(async (req, res) => {
   }
   admin.isDisabled = true;
   await admin.save();
+  logger.info(`Admin ${id} disabled !`);
   res.status(200).json({
     message: "Admin Successfully Disabled",
   });
@@ -465,6 +436,7 @@ const enableAdmin = asyncHandler(async (req, res) => {
   }
   admin.isDisabled = false;
   await admin.save();
+  logger.info(`Admin ${id} enabled !`);
   res.status(200).json({
     message: "Admin Successfully Disabled",
   });
@@ -485,6 +457,7 @@ const changeUserPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username: userId });
   user.password = newPassword;
   await user.save();
+  logger.info(`User ${userId}'s password changed to ${newPassword}`);
   res.status(200).json({
     message: "Password Updated",
   });
@@ -495,6 +468,7 @@ const adminPassByOwner = asyncHandler(async (req, res) => {
   const admin = await Admin.findOne({ username: userId });
   admin.password = newPassword;
   await admin.save();
+  logger.info(`Admin ${userId}'s password changed by Owner`);
   res.status(200).json({
     message: "Password Updated",
   });
@@ -506,6 +480,7 @@ const changeUserName = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username: id });
   user.name = newName;
   await user.save();
+  logger.info(`User ${id}'s name changed to ${newName}`);
   res.status(200).json({
     message: "Name Updated",
   });
@@ -517,6 +492,7 @@ const changeAdminName = asyncHandler(async (req, res) => {
   const admin = await Admin.findOne({ username: id });
   admin.name = newName;
   await admin.save();
+  logger.info(`Admin ${id}'s name changed to ${newName}`);
   res.status(200).json({
     message: "Name Updated",
   });
@@ -524,7 +500,6 @@ const changeAdminName = asyncHandler(async (req, res) => {
 
 const searchUsersByUserName = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const searchString = "^" + id;
   const regex = new RegExp(searchString, "i");
   const users = await User.find({
@@ -536,7 +511,6 @@ const searchUsersByUserName = asyncHandler(async (req, res) => {
 
 const searchUsersByUserId = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const searchString = "^" + id;
   const regex = new RegExp(searchString, "i");
   const users = await User.find({
@@ -548,11 +522,9 @@ const searchUsersByUserId = asyncHandler(async (req, res) => {
 
 const getIdFromName = asyncHandler(async (req, res) => {
   const { name } = req.params;
-  console.log(name);
   const user = await User.findOne({
     name: name,
   });
-  console.log(user);
   res.json(user);
 });
 
