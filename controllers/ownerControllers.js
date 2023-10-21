@@ -106,4 +106,22 @@ const registerAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createOwner, registerAdmin };
+const getRoomsOfOwner = asyncHandler(async (req, res) => {
+  const { owner } = req.body;
+  if (!owner) {
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  }
+  const ownerExists = await Owner.findOne({ ownerId: owner });
+  if (!ownerExists) {
+    res.status(400).json({
+      message: "Owner does not exist",
+    });
+  } else {
+    res.status(200).json({
+      rooms: ownerExists.rooms,
+    });
+  }
+});
+
+module.exports = { createOwner, registerAdmin, getRoomsOfOwner };
