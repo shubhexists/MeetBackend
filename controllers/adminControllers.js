@@ -162,6 +162,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
           ownerName: owner.ownerName,
           role: owner.role,
           limitOfAdmin: owner.limitOfAdmin,
+          rooms: owner.rooms,
         });
       } else {
         res.status(401);
