@@ -13,6 +13,10 @@ e) Prometheus Server Monitoring (Docker compose and prometheus-config.yml) - htt
 
 f) Grafana Visualization - https://metrics.zoomtod.com 
 
+Viewer Id - public
+
+Viewer Password - public
+
 g) Loki for Logs collection ( Displayed on the Grafana Dashboard )
 
 h) Livekit WebRTC Server for Real Time Communication - https://livekit.zoomtod.com
