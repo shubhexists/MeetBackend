@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const Room = require("../models/roomModels");
 const Admin = require("../models/adminModel");
 const Announcement = require("../models/announcementModel");
+const Owner = require("../models/ownerModel");
 const jwt = require("jsonwebtoken");
 const LokiTransport = require("winston-loki");
 const { createLogger } = require("winston");
@@ -128,6 +129,7 @@ const deleteAdmin = asyncHandler(async (req, res) => {
 });
 
 const loginAdmin = asyncHandler(async (req, res) => {
+  //CHANGE - If not admin, then check if it a owner
   const { username, password } = req.body;
   logger.info(`Admin ${username} is requesting login`);
   if (!username || !password) {
@@ -135,33 +137,66 @@ const loginAdmin = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory");
   }
   const admin = await Admin.findOne({ username });
-  if (admin.isDisabled) {
-    res.status(201);
-    throw new Error("You are disabled, Kindly contact the Owner.");
-  } else {
-    if (admin && password === admin.password) {
-      const accessToken = jwt.sign(
-        {
-          admin: {
-            _id: admin._id,
-            username: admin.username,
-            name: admin.name,
-            roomId: admin.roomId,
-            role: admin.role,
-          },
-        },
-        process.env.ACCESS_TOKEN_SECRET
-      );
-      res.status(200).json({
-        accessToken,
-        username: admin.username,
-        name: admin.name,
-        roomId: admin.roomId,
-        role: admin.role,
-      });
-    } else {
+  if (!admin) {
+    const owner = await Owner.findOne({ ownerId: username });
+    if (!owner) {
       res.status(401);
       throw new Error("Invalid username or password");
+    } else {
+      if (owner && password === owner.password) {
+        const accessToken = jwt.sign(
+          {
+            owner: {
+              _id: owner._id,
+              ownerId: owner.ownerId,
+              ownerName: owner.ownerName,
+              role: owner.role,
+              limitOfAdmin: owner.limitOfAdmin,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        res.status(200).json({
+          accessToken,
+          ownerId: owner.ownerId,
+          ownerName: owner.ownerName,
+          role: owner.role,
+          limitOfAdmin: owner.limitOfAdmin,
+        });
+      } else {
+        res.status(401);
+        throw new Error("Invalid username or password");
+      }
+    }
+  } else {
+    if (admin.isDisabled) {
+      res.status(201);
+      throw new Error("You are disabled, Kindly contact the Owner.");
+    } else {
+      if (admin && password === admin.password) {
+        const accessToken = jwt.sign(
+          {
+            admin: {
+              _id: admin._id,
+              username: admin.username,
+              name: admin.name,
+              roomId: admin.roomId,
+              role: admin.role,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        res.status(200).json({
+          accessToken,
+          username: admin.username,
+          name: admin.name,
+          roomId: admin.roomId,
+          role: admin.role,
+        });
+      } else {
+        res.status(401);
+        throw new Error("Invalid username or password");
+      }
     }
   }
 });

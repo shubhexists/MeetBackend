@@ -1,3 +1,4 @@
+
 const express = require("express");
 const connectDb = require("./config/dbConnection");
 const responseTime = require('response-time');
@@ -6,6 +7,8 @@ const errorHandler = require("./middleware/errorHandler");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 connectDb();
+
+//DONT USE BCRYPT AS WE NEED TO DISPLAY THE PASSWORD IN THE FRONTEND
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -51,6 +54,7 @@ app.get("/metrics", async (req, res) => {
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/livekit", require("./routes/livekitRoutes"));
+app.use("/api/owner", require("./routes/ownerRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use(errorHandler);

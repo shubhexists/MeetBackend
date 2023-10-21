@@ -29,9 +29,6 @@ const OwnerSchema = new mongoose.Schema(
         limitOfAdmin: {
             type: Number,
             required: [true, "Please enter the limitOfAdmin."],
-        },
-        admins: {
-            type: [String]
         }
     }
 );

@@ -88,7 +88,7 @@ const setIsSpeaking = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username: id });
   user.isSpeaking = true;
   await user.save();
-  logger.info(`User ${id} can now speaking`);
+  logger.info(`User ${id} can now speak`);
   res.json({
     message: "User is now speaking",
   });
