@@ -230,6 +230,11 @@ const addRoom = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
   logger.info(`Request to add Room ${roomId} to Admin ${id}`);
   const admin = await Admin.findOne({ username: id });
+  const owner = admin.owner;
+  const ownerExists = await Owner.findOne({ ownerId: owner });
+  // ADD THE ROOM TO THE OWNER OF THAT ADMIN
+  ownerExists.rooms.push(roomId);
+  await ownerExists.save();
   admin.roomId.push(roomId);
   await admin.save();
   const room = await Room.findOne({ roomId });
