@@ -43,6 +43,10 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please enter the role"],
   },
+  owner:{
+    type: String,
+    required: [true, "Please enter the owner"],
+  }
 });
 
 module.exports = mongoose.model("Admin", adminSchema);
