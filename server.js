@@ -1,4 +1,3 @@
-
 const express = require("express");
 const connectDb = require("./config/dbConnection");
 const responseTime = require('response-time');

@@ -12,7 +12,6 @@ const logger = createLogger({
   ],
 });
 
-
 const createOwner = asyncHandler(async (req, res) => {
   const { ownerId, ownerName, password, role, limitOfAdmin } = req.body;
   if (!ownerId || !ownerName || !password || !role || !limitOfAdmin) {
@@ -124,4 +123,52 @@ const getRoomsOfOwner = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { createOwner, registerAdmin, getRoomsOfOwner };
+const getOwners = asyncHandler(async (req, res) => {
+  const owners = await Owner.find({
+    role: "Owner",
+  });
+  if (owners) {
+    res.status(200).json({
+      owners,
+    });
+  } else {
+    res.status(400);
+    throw new Error("No owners found");
+  }
+});
+
+const disableOwner = asyncHandler(async (req, res) => {
+  const { owner } = req.body;
+  if (!owner) {
+    res.status(400);
+    throw new Error("All fields are mandatory");
+  } else {
+    const ownerExists = await Owner.findOne({ ownerId: owner });
+    if (!ownerExists) {
+      res.status(400).json({
+        message: "Owner does not exist",
+      });
+    } else {
+      const disable = await Owner.updateOne(
+        { ownerId: owner },
+        { isDisabled: true }
+      );
+      if (disable) {
+        res.status(200).json({
+          message: "Owner disabled",
+        });
+      } else {
+        res.status(400);
+        throw new Error("Owner could not be disabled");
+      }
+    }
+  }
+});
+
+module.exports = {
+  createOwner,
+  registerAdmin,
+  getRoomsOfOwner,
+  getOwners,
+  disableOwner,
+};
