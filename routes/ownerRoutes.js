@@ -6,6 +6,7 @@ const {
   getRoomsOfOwner,
   getOwners,
   disableOwner,
+  enableOwner,
 } = require("../controllers/ownerControllers");
 
 router.get("/getOwners", getOwners);
@@ -15,4 +16,5 @@ router.post("/createOwner", createOwner);
 router.post("/registerAdmin", registerAdmin);
 
 router.put("/disableOwner", disableOwner);
+router.put("/enableOwner", enableOwner);
 module.exports = router;
