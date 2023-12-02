@@ -569,6 +569,15 @@ const getIdFromName = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
+const getIdFromNameAndRoomId = asyncHandler(async (req, res) => {
+  const { name , roomId } = req.params;
+  const user = await User.findOne({
+    name: name,
+    roomId:roomId,
+  });
+  res.json(user);
+});
+
 module.exports = {
   searchUsersByUserName,
   getAllUsers,
@@ -605,4 +614,5 @@ module.exports = {
   adminPassByOwner,
   changeUserPassword,
   getIdFromName,
+  getIdFromNameAndRoomId,
 };
