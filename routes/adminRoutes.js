@@ -35,6 +35,7 @@ const {
   changeAdminName,
   searchUsersByUserName,
   getIdFromName,
+  getIdFromNameAndRoomId,
   searchUsersByUserId,
 } = require("../controllers/adminControllers.js");
 
@@ -48,6 +49,7 @@ router.get("/getSocketData/:id", getSocketData);
 router.get("/searchUser/:id", searchUsersByUserName);
 router.get('/searchById/:id', searchUsersByUserId);
 router.get("/getIdFromName/:name", getIdFromName);
+router.get("/getIdFromNameAndRoomId/:name/:roomId", getIdFromNameAndRoomId);
 
 router.post("/auth/login", loginAdmin);
 router.post("/createRoom", createNewRoom);
